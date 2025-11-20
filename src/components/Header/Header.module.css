@@ -1,0 +1,101 @@
+.header {
+    background-color: #38006b;
+    padding: 10px 40px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto; 
+    width: 100%; 
+    box-sizing: border-box;
+}
+
+.leftNav {
+    display: flex; 
+    align-items: center;
+}
+
+.logoLink {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logoImage {
+    height: 30px; 
+    width: auto;  
+    display: block; 
+}
+
+.navLink {
+    color: white;
+    text-decoration: none;
+    font-size: 15px; 
+    padding: 5px 0;
+    transition: color 0.2s;
+}
+
+.navLink:hover {
+    color: #ffcc00;
+}
+
+.rightNav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.profileDropdownContainer {
+    position: relative; 
+    cursor: pointer;
+    user-select: none;
+    padding: 5px; 
+}
+
+.profileContainer {
+    display: flex;
+    align-items: center;
+}
+
+.userIcon {
+    color: white;
+    font-size: 28px; 
+    margin-right: 5px; 
+}
+
+.dropdownIcon {
+    color: white;
+    font-size: 10px; 
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: 100%; 
+    right: 0; 
+    width: 150px;
+    background-color: #e0e0e0; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 5px;
+    z-index: 10; 
+}
+
+.dropdownItem {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #38006b; 
+    font-size: 15px;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.dropdownItem:hover {
+    background-color: #c7c7c7;
+}
+
+.dropdownDivider {
+    height: 1px;
+    background-color: #38006b; /* Linha roxa */
+    margin: 0 10px;
+}

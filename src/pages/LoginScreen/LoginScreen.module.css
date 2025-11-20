@@ -1,0 +1,161 @@
+.loginContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 50px); 
+    background-color: #f0f0f0;
+    position: relative;
+    padding: 30px 0;
+}
+
+.contentCard {
+    background-color: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
+    z-index: 1;
+}
+
+.header {
+    margin-bottom: 30px;
+}
+
+.logo {
+    color: #38006b;
+    font-size: 40px;
+    margin: 0;
+}
+
+.title {
+    color: #38006b;
+    font-size: 24px;
+    margin: 10px 0 5px 0;
+}
+
+.subtitle {
+    color: #5d288d;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.userTypeSelector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    background-color: #e9e9e9;
+    border-radius: 20px;
+    padding: 2px;
+}
+
+.userTypeButton {
+    background: none;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #38006b;
+    transition: background-color 0.3s;
+    width: 50%;
+}
+
+.userTypeButton.active {
+    background-color: #5d288d; /* Roxo mais claro */
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.inputGroup {
+    display: flex;
+    align-items: center;
+    background-color: #e9e9e9;
+    border-radius: 25px;
+    padding: 0 15px;
+}
+
+.inputIcon {
+    color: #5d288d;
+    margin-right: 10px;
+}
+
+.inputField {
+    flex-grow: 1;
+    border: none;
+    background: none;
+    padding: 12px 0;
+    outline: none;
+    font-size: 16px;
+}
+
+.forgotPassword {
+    font-size: 12px;
+    text-align: left;
+    margin: -5px 0 10px 10px;
+}
+
+.forgotLink {
+    color: #ff9800; /* Laranja */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.loginButton {
+    background-color: #38006b;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.loginButton:hover {
+    background-color: #5d288d;
+}
+
+.registerLinkText {
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+.bookDecoration {
+    position: absolute;
+    bottom: 20px;
+    left: 20%;
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+
+.bookIcon, .bookIconOpen {
+    width: 60px;
+    height: 80px;
+    background-color: #ccc; /* Placeholder */
+    border: 2px solid #333;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.bookIconOpen {
+    /* Simula um livro aberto */
+    width: 100px;
+    height: 70px;
+    border-radius: 0;
+    transform: rotate(10deg);
+}

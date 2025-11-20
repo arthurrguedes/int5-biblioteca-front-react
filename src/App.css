@@ -1,3 +1,9 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0; /* Cor de fundo principal do site */
+}
+
 .App {
   text-align: center;
 }
@@ -22,6 +28,15 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.headerWrapper {
+  background-color: #38006b;
+  width: 100%; 
+  position: fixed; 
+  top: 0; 
+  left: 0;
+  z-index: 1000;
 }
 
 .App-link {

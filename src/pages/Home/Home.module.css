@@ -1,0 +1,28 @@
+.homeContainer {
+    padding: 0; 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    background-color: #f0f0f0; 
+}
+
+.heroSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 0; 
+    background-color: #f0f0f0;
+    margin-bottom: 0; 
+    border: none; 
+    width: 100%;
+}
+
+.bannerImage {
+    max-width: 90%; 
+    height: auto;
+    display: block; 
+}
+
+.mainContent {
+    padding: 2px 40px; 
+    background-color: #f0f0f0;
+}

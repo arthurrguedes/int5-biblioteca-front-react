@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  # Nome do serviço
+  biblioteca-front:
+    # Constrói a imagem usando o Dockerfile na pasta atual
+    build: .
+    # Nome do container para facilitar identificação
+    container_name: biblioteca-front-container
+    # Mapeia a porta 3000 do seu PC para a 3000 do container
+    ports:
+      - "3000:3000"
+    # Mapeia a pasta src para dentro do container
+    # Isso permite "Hot Reload": salvou o código, atualiza no navegador
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    # Variáveis de ambiente (necessário para o Hot Reload funcionar bem no Docker)
+    environment:
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true

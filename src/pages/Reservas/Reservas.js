@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
+import Button from '../../components/Button/Button';
 import styles from './Reservas.module.css';
 
-// Dados mockados sincronizados com o Catálogo
-// IMPORTANTE: Para o redirecionamento funcionar, o livro precisa existir nesta lista.
 const MOCK_BOOKS = [
   { id: 1, title: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kelly Cesar', year: '2018', edition: '1ª', language: 'Português', pages: 272, status: 'disponivel', queuePosition: null },
   { id: 2, title: 'O Guia do Mochileiro das Galáxias', author: 'Douglas Adams', year: '2010', edition: '10ª', language: 'Português', pages: 300, status: 'indisponivel', queuePosition: 5 },
@@ -20,7 +19,6 @@ const MOCK_BOOKS = [
   { id: 11, title: 'Piquenique na Relva', author: 'Autor Hilario', year: '2018', edition: '2ª', language: 'Português', pages: 150, status: 'disponivel', queuePosition: null },
   { id: 12, title: 'O Monge e o Executivo', author: 'James C. Hunter', year: '2004', edition: '1ª', language: 'Português', pages: 180, status: 'reservado', queuePosition: null },
   { id: 13, title: 'O Labirinto do Fauno', author: 'Guillermo del Toro', year: '2019', edition: '1ª', language: 'Português', pages: 250, status: 'disponivel', queuePosition: null },
-  // Adicional da tela de empréstimos
   { id: 99, title: 'Café Com Deus Pai Edição 2025', author: 'Júnior Rostirola', year: '2025', edition: '-', language: 'Português', pages: 424, status: 'indisponivel', queuePosition: 2 },
 ];
 
@@ -32,19 +30,15 @@ const Reservas = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Efeito para capturar o livro enviado pela navegação (Catálogo ou Detalhes)
   useEffect(() => {
     if (location.state && location.state.selectedBookTitle) {
       const titleToFind = location.state.selectedBookTitle;
-      
-      // Busca o livro na lista mockada
       const foundBook = MOCK_BOOKS.find(b => 
         b.title.toLowerCase().trim() === titleToFind.toLowerCase().trim()
       );
-
       if (foundBook) {
-        setSelectedBook(foundBook); // Seleciona o card e abre a sidebar
-        setSearchTerm(foundBook.title); // Filtra a lista para mostrar apenas este livro
+        setSelectedBook(foundBook);
+        setSearchTerm(foundBook.title);
       }
     }
   }, [location.state]);
@@ -67,14 +61,12 @@ const Reservas = () => {
 
   const handleConfirmAction = () => {
     if (!selectedBook) return;
-
     if (selectedBook.status === 'disponivel') {
       alert(`Reserva confirmada para: ${selectedBook.title}`);
     } else if (selectedBook.status === 'indisponivel') {
       alert(`Você entrou na fila de espera para: ${selectedBook.title}`);
     } else if (selectedBook.status === 'reservado') {
-      const confirmCancel = window.confirm('Deseja realmente cancelar esta reserva?');
-      if (confirmCancel) {
+      if (window.confirm('Deseja realmente cancelar esta reserva?')) {
         alert('Reserva cancelada com sucesso.');
       }
     }
@@ -99,8 +91,6 @@ const Reservas = () => {
       <Breadcrumb items={breadcrumbItems} />
 
       <div className={styles.contentLayout}>
-        
-        {/* LISTA DE LIVROS */}
         <div className={styles.leftColumn}>
           <h1 className={styles.pageTitle}>Faça sua reserva</h1>
           
@@ -145,30 +135,21 @@ const Reservas = () => {
                     </div>
 
                     {book.status === 'disponivel' && (
-                      <button 
-                        className={`${styles.actionButton} ${styles.btnGreen}`}
-                        onClick={() => handleSelectBook(book)}
-                      >
+                      <Button variant="success" onClick={() => handleSelectBook(book)}>
                         Reservar
-                      </button>
+                      </Button>
                     )}
 
                     {book.status === 'indisponivel' && (
-                      <button 
-                        className={`${styles.actionButton} ${styles.btnOrange}`}
-                        onClick={() => handleSelectBook(book)}
-                      >
+                      <Button variant="warning" onClick={() => handleSelectBook(book)}>
                         Entrar na fila
-                      </button>
+                      </Button>
                     )}
 
                     {book.status === 'reservado' && (
-                      <button 
-                        className={`${styles.actionButton} ${styles.btnRed}`}
-                        onClick={() => handleSelectBook(book)}
-                      >
+                      <Button variant="danger" onClick={() => handleSelectBook(book)}>
                         Cancelar
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -180,15 +161,13 @@ const Reservas = () => {
             )}
           </div>
 
-          <button 
-            className={styles.myLoansButton}
-            onClick={() => navigate('/emprestimos')}
-          >
-            Meus Emprestimos
-          </button>
+          <div style={{ marginTop: '20px' }}>
+            <Button variant="dark" onClick={() => navigate('/emprestimos')}>
+              Meus Emprestimos
+            </Button>
+          </div>
         </div>
 
-        {/* SIDEBAR DE DETALHES */}
         <div className={styles.rightColumn}>
           <div className={styles.sidebarCard}>
             <div className={styles.orangeHeader}></div>
@@ -229,15 +208,15 @@ const Reservas = () => {
                   </div>
                 </div>
 
-                <button 
-                  className={styles.confirmButton} 
-                  onClick={handleConfirmAction}
-                  style={{ 
-                    backgroundColor: selectedBook.status === 'reservado' ? '#e57373' : '#4caf50' 
-                  }}
-                >
-                  {selectedBook.status === 'reservado' ? 'Confirmar Cancelamento' : 'Confirmar'}
-                </button>
+                <div style={{ marginTop: '20px' }}>
+                  <Button 
+                    variant={selectedBook.status === 'reservado' ? 'danger' : 'success'} 
+                    fullWidth
+                    onClick={handleConfirmAction}
+                  >
+                    {selectedBook.status === 'reservado' ? 'Confirmar Cancelamento' : 'Confirmar'}
+                  </Button>
+                </div>
               </>
             ) : (
               <div className={styles.noSelection}>
@@ -246,7 +225,6 @@ const Reservas = () => {
             )}
           </div>
         </div>
-
       </div>
     </div>
   );

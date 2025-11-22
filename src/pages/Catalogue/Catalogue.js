@@ -1,43 +1,29 @@
 import React, { useState, useMemo } from 'react';
 import styles from './Catalogue.module.css';
-import { FaSearch, FaBookOpen } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'; // 1. Importação do Componente
+import { FaSearch } from 'react-icons/fa';
+import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
+import BookCard from '../../components/BookCard/BookCard';
 
-// --- Dados Mockados para Simulação ---
 const MOCK_BOOKS = [
-  { id: 1, title: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kelly Cesar', category: 'Humor', isbn: '978852703857', edition: '1ª (2018)', pages: 272, description: 'Descrição detalhada do livro...' },
-  { id: 2, title: 'O Guia do Mochileiro das Galáxias', author: 'Douglas Adams', category: 'Ficção Científica', isbn: '1234567890123', edition: 'Edição 10', pages: 300, description: 'Uma aventura hilária no espaço.' },
-  { id: 3, title: 'A Culpa é das Estrelas', author: 'John Green', category: 'Romance', isbn: '9876543210987', edition: 'Edição 5', pages: 280, description: 'Um romance emocionante.' },
-  { id: 4, title: 'Código Limpo', author: 'Robert C. Martin', category: 'Tecnologia', isbn: '1122334455667', edition: 'Edição 1', pages: 464, description: 'Guia essencial para escrever código de qualidade.' },
-  { id: 5, title: 'Use a Cabeça! Java', author: 'Kathy Sierra', category: 'Tecnologia', isbn: '5544332211009', edition: 'Edição 2', pages: 688, description: 'Aprenda Java de forma divertida.' },
-  { id: 6, title: 'O Poder do Hábito', author: 'Charles Duhigg', category: 'Autoajuda', isbn: '1111111111111', edition: 'Edição 3', pages: 400, description: 'Descubra como os hábitos funcionam.' },
-  { id: 7, title: 'It: A Coisa', author: 'Stephen King', category: 'Terror', isbn: '2222222222222', edition: 'Edição 4', pages: 1138, description: 'O clássico do terror.' },
-  { id: 8, title: 'A Semente do Amanhã', author: 'Roberto C. Martin', category: 'Tecnologia', isbn: '3333333333333', edition: 'Edição 1', pages: 200, description: 'Um guia sobre sustentabilidade.' },
-  { id: 9, title: 'Misterio no Expresso Oriente', author: 'Agatha Christie', category: 'Mistério', isbn: '4444444444444', edition: 'Edição 1', pages: 350, description: 'Um caso clássico de detetive.' },
-  { id: 10, title: 'O Senhor dos Anéis', author: 'J.R.R. Tolkien', category: 'Fantasia', isbn: '5555555555555', edition: 'Edição 1', pages: 1200, description: 'A jornada épica pela Terra Média.' },
-  { id: 11, title: 'Piquenique na Relva', author: 'Autor Hilario', category: 'Humor', isbn: '6666666666666', edition: 'Edição 2', pages: 150, description: 'Contos engraçados.' },
-  { id: 12, title: 'O Monge e o Executivo', author: 'James C. Hunter', category: 'Autoajuda', isbn: '7777777777777', edition: 'Edição 1', pages: 180, description: 'Liderança e serviço.' },
-  { id: 13, title: 'O Labirinto do Fauno', author: 'Guillermo del Toro', category: 'Fantasia', isbn: '8888888888888', edition: 'Edição 1', pages: 250, description: 'Conto de fantasia sombria.' },
+  { id: 1, title: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kelly Cesar', category: 'Humor', isbn: '978852703857', edition: '1ª (2018)', pages: 272 },
+  { id: 2, title: 'O Guia do Mochileiro das Galáxias', author: 'Douglas Adams', category: 'Ficção Científica', isbn: '1234567890123', edition: 'Edição 10', pages: 300 },
+  { id: 3, title: 'A Culpa é das Estrelas', author: 'John Green', category: 'Romance', isbn: '9876543210987', edition: 'Edição 5', pages: 280 },
+  { id: 4, title: 'Código Limpo', author: 'Robert C. Martin', category: 'Tecnologia', isbn: '1122334455667', edition: 'Edição 1', pages: 464 },
+  { id: 5, title: 'Use a Cabeça! Java', author: 'Kathy Sierra', category: 'Tecnologia', isbn: '5544332211009', edition: 'Edição 2', pages: 688 },
+  { id: 6, title: 'O Poder do Hábito', author: 'Charles Duhigg', category: 'Autoajuda', isbn: '1111111111111', edition: 'Edição 3', pages: 400 },
+  { id: 7, title: 'It: A Coisa', author: 'Stephen King', category: 'Terror', isbn: '2222222222222', edition: 'Edição 4', pages: 1138 },
+  { id: 8, title: 'A Semente do Amanhã', author: 'Roberto C. Martin', category: 'Tecnologia', isbn: '3333333333333', edition: 'Edição 1', pages: 200 },
+  { id: 9, title: 'Misterio no Expresso Oriente', author: 'Agatha Christie', category: 'Mistério', isbn: '4444444444444', edition: 'Edição 1', pages: 350 },
+  { id: 10, title: 'O Senhor dos Anéis', author: 'J.R.R. Tolkien', category: 'Fantasia', isbn: '5555555555555', edition: 'Edição 1', pages: 1200 },
+  { id: 11, title: 'Piquenique na Relva', author: 'Autor Hilario', category: 'Humor', isbn: '6666666666666', edition: 'Edição 2', pages: 150 },
+  { id: 12, title: 'O Monge e o Executivo', author: 'James C. Hunter', category: 'Autoajuda', isbn: '7777777777777', edition: 'Edição 1', pages: 180 },
+  { id: 13, title: 'O Labirinto do Fauno', author: 'Guillermo del Toro', category: 'Fantasia', isbn: '8888888888888', edition: 'Edição 1', pages: 250 },
 ];
 
 const CATEGORIES = [
   'Humor', 'Tecnologia', 'Romance', 'Terror', 'Autoajuda', 
   'Ficção Científica', 'Fantasia', 'Mistério', 'Aventura', 'Histórico'
 ];
-// --- Fim dos Dados Mockados ---
-
-const BookCard = ({ book }) => (
-  <Link to={`/catalogo/livro/${book.id}`} className={styles.bookCard}>
-    <div className={styles.bookPlaceholder}>
-      <FaBookOpen style={{ fontSize: '40px', color: '#ccc' }} />
-    </div>
-    <div>
-      <div className={styles.bookTitle} title={book.title}>{book.title}</div>
-      <div className={styles.bookAuthor}>{book.author}</div>
-    </div>
-  </Link>
-);
 
 const Catalogue = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -73,36 +59,28 @@ const Catalogue = () => {
     return 'Todos os Livros';
   };
 
-  // 2. Configuração dos itens do Breadcrumb
   const breadcrumbItems = useMemo(() => {
-    // Itens base que sempre aparecem
     const items = [
       { label: 'Home', path: '/' },
       { label: 'Catálogo', path: '/catalogo' }
     ];
 
-    // Se houver busca ou categoria selecionada, adicionamos como o nível atual
     if (searchTerm) {
       items.push({ label: `Busca: "${searchTerm}"`, path: '#' });
     } else if (selectedCategory) {
       items.push({ label: selectedCategory, path: '#' });
     }
-    // Nota: Se não houver filtro, 'Catálogo' será o último item e o componente Breadcrumb
-    // automaticamente o renderizará como texto (não clicável), o que é o comportamento correto.
 
     return items;
   }, [searchTerm, selectedCategory]);
 
   return (
     <div className={styles.catalogueContainer}>
-      {/* 3. Substituição do breadcrumb simulado pelo Componente Real */}
       <div style={{ marginBottom: '20px' }}>
         <Breadcrumb items={breadcrumbItems} />
       </div>
 
       <div className={styles.contentLayout}>
-        
-        {/* Sidebar de Categorias */}
         <div className={styles.sidebar}>
           <div className={styles.sidebarTitle}>Nosso acervo</div>
           <ul className={styles.categoryList}>
@@ -118,9 +96,7 @@ const Catalogue = () => {
           </ul>
         </div>
 
-        {/* Conteúdo Principal */}
         <div className={styles.mainContent}>
-          
           <div className={styles.searchBar}>
             <input
               type="text"
@@ -141,10 +117,10 @@ const Catalogue = () => {
           <div className={styles.bookGrid}>
             {filteredBooks.length > 0 ? (
               filteredBooks.map(book => (
-                <BookCard key={book.id} book={book} />
+                <BookCard key={book.id} book={book} linkTo={`/catalogo/livro/${book.id}`} />
               ))
             ) : (
-              <div className={styles.noResults}>Nenhum livro encontrado para os critérios de busca/filtro.</div>
+              <div className={styles.noResults}>Nenhum livro encontrado.</div>
             )}
           </div>
         </div>

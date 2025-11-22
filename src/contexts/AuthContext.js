@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
+import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
 
 // 1. Cria o Contexto
 const AuthContext = createContext(null);
@@ -6,11 +6,21 @@ const AuthContext = createContext(null);
 // Dados de teste (simulando backend)
 const ADMIN_CREDENTIALS = { user: 'admin', password: 'admin123' };
 
+// Chaves para o localStorage
+const STORAGE_KEY_USER = '@BibliotecaPlus:user';
+const STORAGE_KEY_TOKEN = '@BibliotecaPlus:token';
+
 // 2. Provedor de Contexto
 export const AuthProvider = ({ children }) => {
-  // Estado para armazenar o token (simulado) e a role
-  const [user, setUser] = useState(null); // { username: string, role: 'user' | 'admin' }
-  const [token, setToken] = useState(null); // String simulada do JWT
+  // Inicializa o estado lendo do localStorage (Persistência)
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem(STORAGE_KEY_USER);
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem(STORAGE_KEY_TOKEN);
+  });
 
   // Simula a lógica de login com base em credenciais
   const login = useCallback((email, password, isLibrarian) => {
@@ -27,27 +37,39 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: 'Credenciais de Bibliotecário inválidas.' };
       }
     } else {
-      // Para usuários comuns, qualquer cadastro/login é aceito por enquanto
       if (!email || !password) {
         return { success: false, message: 'Preencha todos os campos.' };
       }
       role = 'user';
     }
 
-    setUser({ username, role });
+    const userData = { username, role };
+
+    // Atualiza estado
+    setUser(userData);
     setToken(simulatedToken);
+
+    // Persiste no localStorage
+    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
+    localStorage.setItem(STORAGE_KEY_TOKEN, simulatedToken);
+
     console.log(`Login successful as ${role}. Token: ${simulatedToken}`);
     return { success: true, role };
 
   }, []);
 
-  // Simula a lógica de cadastro (por enquanto, apenas loga como 'user')
+  // Simula a lógica de cadastro
   const register = useCallback((username, email, password) => {
-      // Simula um JWT token para o novo usuário
       const simulatedToken = `fake-jwt-${username}-user-token`;
+      const userData = { username, role: 'user' };
       
-      setUser({ username, role: 'user' });
+      setUser(userData);
       setToken(simulatedToken);
+
+      // Persiste no localStorage
+      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
+      localStorage.setItem(STORAGE_KEY_TOKEN, simulatedToken);
+
       console.log(`Registration successful as user. Token: ${simulatedToken}`);
       return { success: true, role: 'user' };
   }, []);
@@ -56,6 +78,11 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     setUser(null);
     setToken(null);
+
+    // Remove do localStorage
+    localStorage.removeItem(STORAGE_KEY_USER);
+    localStorage.removeItem(STORAGE_KEY_TOKEN);
+
     console.log('Logout successful.');
   }, []);
 

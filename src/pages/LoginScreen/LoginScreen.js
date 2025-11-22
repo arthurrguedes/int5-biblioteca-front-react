@@ -1,33 +1,28 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
 import styles from './LoginScreen.module.css';
-import { FaLock, FaEnvelope, FaUserCircle } from 'react-icons/fa';
+import { FaLock, FaEnvelope } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext'; 
+import Input from '../../components/Input/Input';
+import Button from '../../components/Button/Button';
+import { toast } from 'react-toastify';
 
 const LoginScreen = () => {
-  const [userType, setUserType] = useState('usuario'); // 'usuario' ou 'bibliotecario'
+  const [userType, setUserType] = useState('usuario');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth(); // Usar o hook de autenticação
-  const navigate = useNavigate(); // Hook de navegação
+  const { login } = useAuth(); 
+  const navigate = useNavigate(); 
 
   const handleLogin = (e) => {
     e.preventDefault();
-    
-    // Admin login simulation: use 'admin' for email and 'admin123' for password
     const isLibrarian = userType === 'bibliotecario';
-
     const result = login(email, password, isLibrarian);
 
     if (result.success) {
-      // Redireciona com base na role
-      if (result.role === 'admin') {
-        navigate('/'); // Redireciona para home ou painel admin
-      } else {
-        navigate('/'); // Redireciona para home do usuário
-      }
+      navigate('/');
     } else {
-      alert(result.message); // Exibe mensagem de erro
+      toast.error(result.message || "Erro ao realizar login.");
     }
   };
 
@@ -35,12 +30,10 @@ const LoginScreen = () => {
     <div className={styles.loginContainer}>
       <div className={styles.contentCard}>
         <div className={styles.header}>
-         { /*<h1 className={styles.logo}>B+</h1>*/}
           <h2 className={styles.title}>Bem vindos à Biblioteca+!</h2>
           <p className={styles.subtitle}>FAÇA SEU LOGIN</p>
         </div>
 
-        {/* Seleção de Tipo de Usuário */}
         <div className={styles.userTypeSelector}>
           <button 
             className={`${styles.userTypeButton} ${userType === 'usuario' ? styles.active : ''}`}
@@ -57,39 +50,31 @@ const LoginScreen = () => {
         </div>
 
         <form onSubmit={handleLogin} className={styles.form}>
-          {/* Campo Email */}
-          <div className={styles.inputGroup}>
-            <FaEnvelope className={styles.inputIcon} />
-            <input 
-              type="text" // Alterado para text para aceitar 'admin'
-              placeholder={userType === 'bibliotecario' ? 'Usuário: admin' : 'Digite seu email'} 
-              required 
-              className={styles.inputField} 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+          <Input 
+            type="text"
+            placeholder={userType === 'bibliotecario' ? 'Usuário: admin' : 'Digite seu email'}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            icon={FaEnvelope}
+            required
+          />
 
-          {/* Campo Senha */}
-          <div className={styles.inputGroup}>
-            <FaLock className={styles.inputIcon} />
-            <input 
-              type="password" 
-              placeholder={userType === 'bibliotecario' ? 'Senha: admin123' : 'Digite sua senha'} 
-              required 
-              className={styles.inputField} 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+          <Input 
+            type="password"
+            placeholder={userType === 'bibliotecario' ? 'Senha: admin123' : 'Digite sua senha'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            icon={FaLock}
+            required
+          />
 
           <p className={styles.forgotPassword}>
             Esqueceu sua senha? <Link to="#" className={styles.forgotLink}>Clique aqui</Link>
           </p>
 
-          <button type="submit" className={styles.loginButton}>
+          <Button type="submit" variant="primary" fullWidth>
             Entrar
-          </button>
+          </Button>
 
           <p className={styles.registerLinkText}>
             Não possui login? <Link to="/cadastro" className={styles.forgotLink}>Cadastre-se aqui</Link>

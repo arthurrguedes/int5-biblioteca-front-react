@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaBookOpen } from 'react-icons/fa';
 import styles from './CategorySection.module.css';
+import BookCard from '../BookCard/BookCard';
 
 const CategorySection = ({ title, books }) => {
   const isEmpty = !books || books.length === 0;
@@ -12,7 +12,6 @@ const CategorySection = ({ title, books }) => {
         <div className={styles.titleBadge}>
           <span className={styles.titleText}>{title}</span>
         </div>
-        {/* Link para o catálogo filtrado se desejar implementar depois */}
         <Link to="/catalogo" className={styles.viewMore}>Ver mais</Link>
       </div>
 
@@ -22,15 +21,9 @@ const CategorySection = ({ title, books }) => {
         ) : (
           <div className={styles.booksScrollContainer}>
             {books.map((book) => (
-              <Link to={`/catalogo/livro/${book.id}`} key={book.id} className={styles.bookCard}>
-                <div className={styles.bookPlaceholder}>
-                  <FaBookOpen style={{ fontSize: '30px', color: '#ccc' }} />
-                </div>
-                <div className={styles.bookInfo}>
-                  <div className={styles.bookTitle} title={book.title}>{book.title}</div>
-                  <div className={styles.bookAuthor}>{book.author}</div>
-                </div>
-              </Link>
+              <div key={book.id} style={{ width: '160px', flexShrink: 0 }}>
+                <BookCard book={book} linkTo={`/catalogo/livro/${book.id}`} />
+              </div>
             ))}
           </div>
         )}

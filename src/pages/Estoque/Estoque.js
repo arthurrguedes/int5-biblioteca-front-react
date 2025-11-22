@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import styles from './Estoque.module.css';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import { FaSearch } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 // Categorias
 const CATEGORIES = [
@@ -40,7 +41,7 @@ const Estoque = () => {
         const newTotal = Math.max(0, item.totalStock + delta);
         // Validação: Não reduzir abaixo do que já está em uso
         if (newTotal < (item.rented + item.reserved)) {
-          alert("Não é possível reduzir o estoque físico abaixo da quantidade emprestada/reservada.");
+          toast.error("Não é possível reduzir o estoque físico abaixo da quantidade emprestada/reservada.");
           return item;
         }
         return { ...item, totalStock: newTotal };

@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext'; // Pega dados do contexto
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import styles from './Perfil.module.css';
 import { FaUser } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const Perfil = () => {
   const { user } = useAuth(); // Pega usuário logado (username, role)
@@ -50,7 +51,7 @@ const Perfil = () => {
     // Aqui você chamaria a API para salvar
     setProfileData(editData);
     setIsEditing(false);
-    alert('Perfil atualizado com sucesso!');
+    toast.success('Perfil atualizado com sucesso!');
   };
 
   const breadcrumbItems = [

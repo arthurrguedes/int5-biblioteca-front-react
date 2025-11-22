@@ -1,39 +1,39 @@
-// src/components/Header/Header.js
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
-import { FaUserCircle, FaChevronDown, FaSignOutAlt } from 'react-icons/fa';
+import { FaUserCircle, FaChevronDown, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
 import LogoImage from '../../assets/logo.png';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Header = () => {
+  // Estado para o Dropdown de Perfil
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // Estado para o Menu Mobile (Sanduíche)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
   const { user, isLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
   
-  const openDropdown = () => {
-    setIsDropdownOpen(true);
-  };
+  // --- Controles do Perfil ---
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const closeDropdown = () => setIsDropdownOpen(false); // Fecha perfil
   
-  const closeDropdown = () => {
-    setIsDropdownOpen(false);
+  // --- Controles do Menu Mobile ---
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+    if (isDropdownOpen) setIsDropdownOpen(false); // Fecha perfil se abrir menu
   };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(prev => !prev);
-  };
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   const handleLogout = () => {
     logout();
     closeDropdown();
+    closeMobileMenu();
     navigate('/login');
   };
 
-  // Define todos os links da navegação
+  // Lista de Links
   const getNavLinks = () => {
-    
-    // LINKS DO ADMIN: Estoque, Controles, Relatórios + Comuns
     const linksAdmin = [
       { to: '/estoque', label: 'Estoque' },
       { to: '/controle-reservas', label: 'Controle de Reservas' },
@@ -43,7 +43,6 @@ const Header = () => {
       { to: '/sobre-nos', label: 'Sobre Nós' },
     ];
     
-    // LINKS DO USUÁRIO COMUM (Corrigido para evitar repetições e manter a ordem)
     const linksUser = [
       { to: '/catalogo', label: 'Catálogo' },
       { to: '/reservas', label: 'Reservas' },
@@ -52,69 +51,49 @@ const Header = () => {
       { to: '/sobre-nos', label: 'Sobre Nós' },
     ];
 
-    // LINKS PARA USUÁRIO DESLOGADO (Mantendo a ordem estrutural original do template)
     const linksDeslogado = [
-      { to: '#', label: 'Sobre Nós' }, // Link 1
-      { to: '#', label: 'Catálogo' },  // Link 2
-      { to: '#', label: 'Reservas' },  // Link 3
-      { to: '#', label: 'Contato' },   // Link 4
-      { to: '#', label: 'Sobre Nós' }, // O template original tinha 5 links fixos, incluindo repetição de Sobre Nós
+      { to: '/login', label: 'Sobre Nós' }, 
+      { to: '/login', label: 'Catálogo' },  
+      { to: '/login', label: 'Reservas' },  
+      { to: '/login', label: 'Contato' },   
     ];
     
-    // Se o user object não existe, verificamos se há token (não)
-    if (!isLoggedIn) {
-        // Para o estado deslogado, vamos usar os 4 links originais, removendo a repetição
-        // que causava a desordem, e mantendo os que você viu na imagem mais cedo.
-        return [
-          { to: '#', label: 'Sobre Nós' }, 
-          { to: '#', label: 'Catálogo' },  
-          { to: '#', label: 'Reservas' },  
-          { to: '#', label: 'Contato' },   
-        ];
-    }
-
-    if (user?.role === 'admin') {
-      // Retorna a lista exclusiva e correta do Admin
-      return linksAdmin;
-    } 
-    
-    if (user?.role === 'user') {
-      // Retorna a lista exclusiva e correta do Usuário Comum
-      return linksUser;
-    }
-
-    // Fallback para caso não haja role, mas esteja logado
-    return linksDeslogado;
+    if (!isLoggedIn) return linksDeslogado;
+    if (user?.role === 'admin') return linksAdmin;
+    return linksUser;
   };
+
+  const navLinks = getNavLinks();
 
   return (
     <header className={styles.header}>
+      {/* Logo à Esquerda */}
       <div className={styles.leftNav}> 
-        <Link to="/" className={styles.logoLink}> 
+        <Link to="/" className={styles.logoLink} onClick={closeMobileMenu}> 
           <img src={LogoImage} alt="Logo Biblioteca Plus" className={styles.logoImage} /> 
         </Link>
       </div>
 
       <div className={styles.rightNav}> 
-        {/* Renderiza links dinamicamente */}
-        {getNavLinks().map((link, index) => (
-          // Usando o índice como chave temporária, já que o "to" pode ser '#'
-          <Link 
-            key={link.to + index} // Chave combinada para unicidade
-            to={link.to} 
-            className={styles.navLink}
-            // Impede navegação se o link for apenas um placeholder '#'
-            onClick={link.to === '#' ? (e) => e.preventDefault() : undefined} 
-          >
-            {link.label}
-          </Link>
-        ))}
         
+        {/* 1. Links em Linha (Apenas Desktop) */}
+        <div className={styles.desktopLinks}>
+          {navLinks.map((link, index) => (
+            <Link 
+              key={index} 
+              to={link.to} 
+              className={styles.navLink}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+        
+        {/* 2. Ícone de Perfil + Dropdown (Sempre visível) */}
         <div 
           className={styles.profileDropdownContainer} 
-          onClick={toggleDropdown} 
-          onMouseEnter={openDropdown} 
-          onMouseLeave={closeDropdown} 
+          onClick={toggleDropdown}
+          // onMouseEnter e Leave podem ser removidos para melhor UX mobile (clique é melhor)
         >
           <div className={styles.profileContainer}>
             <FaUserCircle className={styles.userIcon} />
@@ -125,51 +104,23 @@ const Header = () => {
             <div className={styles.dropdownMenu}>
               {isLoggedIn ? (
                 <>
-                  <div className={styles.dropdownItem}>
-                    Olá, **{user.username}** ({user.role})
+                  <div className={styles.dropdownItem} style={{ cursor: 'default', fontWeight: 'bold' }}>
+                    {user.username} <span style={{ fontSize: '12px', fontWeight: 'normal' }}>({user.role})</span>
                   </div>
                   <div className={styles.dropdownDivider}></div>
                   
-                  {/* Links do Dropdown para Admin */}
-                  {user.role === 'admin' && (
-                    <>
-                      <Link to="/perfil" className={styles.dropdownItem} onClick={closeDropdown}>
-                        Perfil
-                      </Link>
-                      <Link to="/controle-reservas" className={styles.dropdownItem} onClick={closeDropdown}>
-                        Controle de Reservas
-                      </Link>
-                      <div className={styles.dropdownDivider}></div>
-                      <Link to="/controle-emprestimos" className={styles.dropdownItem} onClick={closeDropdown}>
-                        Cont. de Empréstimos
-                      </Link>
-                      <div className={styles.dropdownDivider}></div>
-                      <Link to="/relatorios" className={styles.dropdownItem} onClick={closeDropdown}>
-                        Relatórios
-                      </Link>
-                      <div className={styles.dropdownDivider}></div>
-                      <Link to="#" className={styles.dropdownItem} onClick={handleLogout}>
-                         <FaSignOutAlt style={{ marginRight: '5px' }} /> Sair
-                      </Link>
-                    </>
-                  )}
-
-                  {/* Links do Dropdown para Usuário Comum */}
-                  {user.role === 'user' && (
-                    <>
-                      <Link to="/perfil" className={styles.dropdownItem} onClick={closeDropdown}>
-                        Perfil
-                      </Link>
-                      <div className={styles.dropdownDivider}></div>
-                      <Link to="/emprestimos" className={styles.dropdownItem} onClick={closeDropdown}>
-                        Empréstimos
-                      </Link>
-                      <div className={styles.dropdownDivider}></div>
-                      <Link to="#" className={styles.dropdownItem} onClick={handleLogout}>
-                         <FaSignOutAlt style={{ marginRight: '5px' }} /> Sair
-                      </Link>
-                    </>
-                  )}
+                  <Link to="/perfil" className={styles.dropdownItem} onClick={closeDropdown}>
+                    Meu Perfil
+                  </Link>
+                  
+                  <div className={styles.dropdownDivider}></div>
+                  <div 
+                    className={styles.dropdownItem} 
+                    onClick={handleLogout} 
+                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                  >
+                     <FaSignOutAlt style={{ marginRight: '8px' }} /> Sair
+                  </div>
                 </>
               ) : (
                 <>
@@ -185,7 +136,30 @@ const Header = () => {
             </div>
           )}
         </div>
+
+        {/* 3. Menu Sanduíche (Apenas Mobile - À direita do perfil) */}
+        <div className={styles.hamburgerIcon} onClick={toggleMobileMenu}>
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+        </div>
+
       </div>
+
+      {/* 4. Lista de Links Mobile (Abre quando sanduíche é clicado) */}
+      {isMobileMenuOpen && (
+        <nav className={styles.mobileMenu}>
+          {navLinks.map((link, index) => (
+            <Link 
+              key={index} 
+              to={link.to} 
+              className={styles.mobileNavLink}
+              onClick={closeMobileMenu}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      )}
+
     </header>
   );
 };

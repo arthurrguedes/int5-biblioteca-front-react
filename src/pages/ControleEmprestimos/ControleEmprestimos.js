@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import styles from './ControleEmprestimos.module.css';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import { FaCheckCircle, FaSyncAlt, FaSearch } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 // Utilitários de data (reutilizados para coerência)
 const getToday = () => new Date();
@@ -98,6 +99,7 @@ const ControleEmprestimos = () => {
         }
         return loan;
       }));
+      toast.success('Empréstimo renovado com sucesso!');
     }
   };
 
@@ -110,6 +112,7 @@ const ControleEmprestimos = () => {
         }
         return loan;
       }));
+      toast.info('Devolução registrada. Livro voltou ao estoque.');
     }
   };
 

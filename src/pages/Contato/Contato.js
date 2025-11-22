@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from './Contato.module.css';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock, FaInstagram, FaFacebook, FaTwitter } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const Contato = () => {
   // Estado para o formulário
@@ -21,7 +22,17 @@ const Contato = () => {
     e.preventDefault();
     // Aqui entraria a lógica de envio para o backend
     console.log('Dados do formulário:', formData);
-    alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
+    const resolveAfter2Sec = new Promise(resolve => setTimeout(resolve, 2000));
+    
+    toast.promise(
+        resolveAfter2Sec,
+        {
+          pending: 'Enviando sua mensagem...',
+          success: 'Mensagem enviada com sucesso! Entraremos em contato.',
+          error: 'Erro ao enviar mensagem.'
+        }
+    );
+
     setFormData({ nome: '', email: '', assunto: '', mensagem: '' });
   };
 

@@ -115,11 +115,12 @@
 .bookGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 20px;
+    gap: 35px;
     padding: 20px;
     border: 1px solid #ff9800;
     border-radius: 8px;
     background-color: #fffaf5; /* Fundo leve para área de conteúdo */
+    overflow: visible;
 }
 
 .bookCard {
@@ -169,4 +170,5 @@
     color: #666;
     font-style: italic;
     font-size: 18px;
+    grid-column: 1 / -1;
 }

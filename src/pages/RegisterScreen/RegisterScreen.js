@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Importar useNavigate
+import { toast } from 'react-toastify';
 import styles from './RegisterScreen.module.css';
 import { FaLock, FaEnvelope, FaUserCircle, FaCalendarAlt } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext'; // Importar useAuth
@@ -21,10 +22,10 @@ const RegisterScreen = () => {
     const result = register(username, email, password);
 
     if (result.success) {
-      alert('Cadastro realizado com sucesso! Você está logado.');
+      toast.success('Cadastro realizado com sucesso! Bem-vindo(a).');
       navigate('/');
     } else {
-      alert('Erro no cadastro.');
+      toast.error('Erro ao realizar cadastro. Tente novamente.');
     }
   };
 

@@ -1,0 +1,38 @@
+.button {
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    width: fit-content;
+}
+
+.button:hover {
+    filter: brightness(0.9);
+}
+
+.button:active {
+    transform: translateY(1px);
+}
+
+.button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Variantes */
+.primary { background-color: #38006b; }  /* Roxo (Login, Confirmar) */
+.success { background-color: #4caf50; }  /* Verde (Reservar, Autorizar) */
+.danger  { background-color: #e57373; }  /* Vermelho (Cancelar, Renovar) */
+.warning { background-color: #ff9800; }  /* Laranja (Fila, Editar) */
+.dark    { background-color: #2d2d2d; }  /* Cinza Escuro (Meus Empréstimos) */
+
+/* Tamanhos */
+.fullWidth { width: 100%; }
+.small { padding: 6px 12px; font-size: 12px; }

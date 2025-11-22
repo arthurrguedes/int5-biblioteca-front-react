@@ -1,105 +1,41 @@
 import React, { useState } from 'react';
 import styles from './ControleReservas.module.css';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
+import Button from '../../components/Button/Button';
 
-// Mock de Reservas (Simulando o que viria do Banco de Dados)
 const INITIAL_RESERVATIONS = [
-  {
-    id: 101,
-    user: 'Lorena Oliveira de Souza',
-    bookTitle: 'Gestão de recursos humanos: teorias e reflexões',
-    author: 'Kely César Martins de Paiva',
-    quantity: 1,
-    requestDate: '19/09/2025 - 20:00',
-    classification: '5º',
-    status: 'Aguardando na Fila' 
-  },
-  {
-    id: 102,
-    user: 'Lorena Oliveira de Souza',
-    bookTitle: 'Gestão de recursos humanos: teorias e reflexões',
-    author: 'Kely César Martins de Paiva',
-    quantity: 1,
-    requestDate: '19/09/2025 - 20:00',
-    classification: '0º', // 0º indica que é a vez dele ou está disponível
-    status: 'Pendente' // Pendente de aprovação do admin
-  },
-  {
-    id: 103,
-    user: 'Gabriel Souza',
-    bookTitle: 'Código Limpo',
-    author: 'Robert C. Martin',
-    quantity: 1,
-    requestDate: '20/09/2025 - 10:15',
-    classification: 'X',
-    status: 'Reserva cancelada'
-  },
-  {
-    id: 104,
-    user: 'Lorena Oliveira de Souza',
-    bookTitle: 'O Senhor dos Anéis',
-    author: 'J.R.R. Tolkien',
-    quantity: 1,
-    requestDate: '19/09/2025 - 20:00',
-    classification: '5º',
-    status: 'Aguardando na Fila'
-  },
-  {
-    id: 105,
-    user: 'Lorena Oliveira de Souza',
-    bookTitle: 'Gestão de recursos humanos: teorias e reflexões',
-    author: 'Kely César Martins de Paiva',
-    quantity: 1,
-    requestDate: '19/09/2025 - 20:00',
-    classification: '0º',
-    status: 'Pendente'
-  },
-  {
-    id: 106,
-    user: 'Lorena Oliveira de Souza',
-    bookTitle: 'Gestão de recursos humanos: teorias e reflexões',
-    author: 'Kely César Martins de Paiva',
-    quantity: 1,
-    requestDate: '19/09/2025 - 20:00',
-    classification: 'X',
-    status: 'Reserva cancelada'
-  }
+  { id: 101, user: 'Lorena Oliveira de Souza', bookTitle: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kely César Martins de Paiva', quantity: 1, requestDate: '19/09/2025 - 20:00', classification: '5º', status: 'Aguardando na Fila' },
+  { id: 102, user: 'Lorena Oliveira de Souza', bookTitle: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kely César Martins de Paiva', quantity: 1, requestDate: '19/09/2025 - 20:00', classification: '0º', status: 'Pendente' },
+  { id: 103, user: 'Gabriel Souza', bookTitle: 'Código Limpo', author: 'Robert C. Martin', quantity: 1, requestDate: '20/09/2025 - 10:15', classification: 'X', status: 'Reserva cancelada' },
+  { id: 104, user: 'Lorena Oliveira de Souza', bookTitle: 'O Senhor dos Anéis', author: 'J.R.R. Tolkien', quantity: 1, requestDate: '19/09/2025 - 20:00', classification: '5º', status: 'Aguardando na Fila' },
+  { id: 105, user: 'Lorena Oliveira de Souza', bookTitle: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kely César Martins de Paiva', quantity: 1, requestDate: '19/09/2025 - 20:00', classification: '0º', status: 'Pendente' },
+  { id: 106, user: 'Lorena Oliveira de Souza', bookTitle: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kely César Martins de Paiva', quantity: 1, requestDate: '19/09/2025 - 20:00', classification: 'X', status: 'Reserva cancelada' }
 ];
 
 const ControleReservas = () => {
   const [reservations, setReservations] = useState(INITIAL_RESERVATIONS);
   const [selectedId, setSelectedId] = useState(null);
 
-  // Encontra a reserva selecionada completa
   const selectedReservation = reservations.find(r => r.id === selectedId);
 
-  // Função para Autorizar (Muda status para Aprovada/Emprestado)
   const handleAuthorize = () => {
     if (!selectedId) return;
-    
     setReservations(prev => prev.map(item => {
-      if (item.id === selectedId) {
-        return { ...item, status: 'Aprovada', classification: '-' };
-      }
+      if (item.id === selectedId) return { ...item, status: 'Aprovada', classification: '-' };
       return item;
     }));
     alert('Reserva autorizada com sucesso!');
   };
 
-  // Função para Cancelar
   const handleCancel = () => {
     if (!selectedId) return;
-
     setReservations(prev => prev.map(item => {
-      if (item.id === selectedId) {
-        return { ...item, status: 'Reserva cancelada', classification: 'X' };
-      }
+      if (item.id === selectedId) return { ...item, status: 'Reserva cancelada', classification: 'X' };
       return item;
     }));
     alert('Reserva cancelada.');
   };
 
-  // Helper para classe de cor do status
   const getStatusClass = (status) => {
     switch (status) {
       case 'Pendente': return styles.statusPending;
@@ -119,14 +55,10 @@ const ControleReservas = () => {
   return (
     <div className={styles.container}>
       <Breadcrumb items={breadcrumbItems} />
-      
       <h1 className={styles.pageTitle}>Controle de Reservas</h1>
 
       <div className={styles.contentLayout}>
-        
-        {/* Coluna Esquerda: Lista */}
         <div className={styles.leftColumn}>
-          
           <div className={styles.tableHeader}>
             <div>Usuário</div>
             <div>Livro</div>
@@ -144,7 +76,7 @@ const ControleReservas = () => {
                 className={`${styles.reservationCard} ${selectedId === res.id ? styles.selected : ''}`}
                 onClick={() => setSelectedId(res.id)}
               >
-                <div title={res.user} className={styles.bookTitle}>{res.user.split(' ')[0]}...</div> {/* Nome encurtado para caber no grid se precisar */}
+                <div title={res.user} className={styles.bookTitle}>{res.user.split(' ')[0]}...</div>
                 <div className={styles.bookTitle} title={res.bookTitle}>{res.bookTitle}</div>
                 <div title={res.author}>{res.author.split(' ')[0]}...</div>
                 <div style={{textAlign: 'center'}}>{res.quantity}</div>
@@ -158,7 +90,6 @@ const ControleReservas = () => {
           </div>
         </div>
 
-        {/* Coluna Direita: Sidebar de Aprovação */}
         <div className={styles.rightColumn}>
           <h3 className={styles.sidebarTitle}>Aprovação da reserva</h3>
           
@@ -194,21 +125,23 @@ const ControleReservas = () => {
               </div>
 
               <div className={styles.actions}>
-                {/* Botões só habilitados se não estiver cancelada ou já aprovada (opcional) */}
-                <button 
-                  className={styles.btnAuthorize} 
+                <Button 
+                  variant="success" 
+                  size="small"
                   onClick={handleAuthorize}
                   disabled={selectedReservation.status === 'Reserva cancelada' || selectedReservation.status === 'Aprovada'}
                 >
                   Autorizar
-                </button>
-                <button 
-                  className={styles.btnCancel} 
+                </Button>
+                
+                <Button 
+                  variant="danger"
+                  size="small" 
                   onClick={handleCancel}
                   disabled={selectedReservation.status === 'Reserva cancelada' || selectedReservation.status === 'Aprovada'}
                 >
                   Cancelar
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
@@ -217,7 +150,6 @@ const ControleReservas = () => {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

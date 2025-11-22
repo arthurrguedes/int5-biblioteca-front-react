@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. Importar useNavigate
+import { useNavigate } from 'react-router-dom';
 import styles from './Emprestimos.module.css';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import { FaChevronDown } from 'react-icons/fa';
+import Button from '../../components/Button/Button'; 
 
 // --- Utilitários para gerar datas dinâmicas ---
 const getFutureDate = (days) => {
@@ -21,7 +22,6 @@ const formatDateObj = (date) => date.toLocaleDateString('pt-BR');
 
 // --- MOCK DATA ---
 const MOCK_LOANS = [
-  // VIGENTES (Datas Futuras)
   {
     id: 1,
     title: 'Código Limpo',
@@ -40,8 +40,6 @@ const MOCK_LOANS = [
     status: 'vigente',
     returnDateRaw: null
   },
-  
-  // DEVOLVIDOS (Datas Passadas)
   {
     id: 3,
     title: 'Arquitetura Limpa',
@@ -106,7 +104,7 @@ const Emprestimos = () => {
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showTimeDropdown, setShowTimeDropdown] = useState(false);
 
-  const navigate = useNavigate(); // 2. Hook de navegação
+  const navigate = useNavigate();
 
   const breadcrumbItems = [
     { label: 'Home', path: '/' },
@@ -127,9 +125,7 @@ const Emprestimos = () => {
     });
   }, [statusFilter, timeFilter]);
 
-  // 3. Atualizar funções de ação para redirecionar
   const goToReservas = (bookTitle) => {
-    // Redireciona para /reservas passando o título no estado
     navigate('/reservas', { state: { selectedBookTitle: bookTitle } });
   };
 
@@ -212,21 +208,25 @@ const Emprestimos = () => {
                       <span className={styles.statusText}>{loan.status}</span>
                     </div>
 
-                    {/* 4. Botões chamando a função de redirecionamento */}
+                    {/* Botões Refatorados usando o Componente Button */}
                     {loan.status === 'vigente' ? (
-                      <button 
-                        className={`${styles.actionBtn} ${styles.btnRenew}`}
+                      <Button 
+                        variant="danger" // Vermelho para Renovar (conforme imagem original)
+                        size="small"
                         onClick={() => goToReservas(loan.title)}
+                        style={{ marginTop: 'auto' }}
                       >
                         Renovar
-                      </button>
+                      </Button>
                     ) : (
-                      <button 
-                        className={`${styles.actionBtn} ${styles.btnReserve}`}
+                      <Button 
+                        variant="warning" // Laranja para Reservar Novamente
+                        size="small"
                         onClick={() => goToReservas(loan.title)}
+                        style={{ marginTop: 'auto' }}
                       >
                         Reserve novamente
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>

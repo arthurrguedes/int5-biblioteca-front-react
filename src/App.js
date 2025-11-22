@@ -17,6 +17,7 @@ import ControleReservas from './pages/ControleReservas/ControleReservas';
 import ControleEmprestimos from './pages/ControleEmprestimos/ControleEmprestimos';
 import BookDetails from './pages/BookDetails/BookDetails';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import Footer from './components/Footer/Footer';
 
 const HEADER_HEIGHT = '50px'; 
 
@@ -102,6 +103,7 @@ function App() {
           />
         </Routes>
       </div>
+      <Footer />
     </div>
   );
 }

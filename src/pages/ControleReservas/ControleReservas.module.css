@@ -1,0 +1,192 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    min-height: 80vh;
+}
+
+.pageTitle {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.contentLayout {
+    display: flex;
+    gap: 30px;
+    /* Alinhamento flex-start foi removido para permitir sticky na sidebar se necessário, 
+       mas como o card é pequeno, podemos manter ou ajustar conforme gosto. 
+       Vou deixar sem para preencher a altura se a lista for grande. */
+}
+
+/* --- Coluna da Esquerda: Lista --- */
+.leftColumn {
+    flex: 3;
+}
+
+/* Cabeçalho da Tabela */
+.tableHeader {
+    display: grid;
+    grid-template-columns: 2fr 3fr 2fr 1fr 2fr 1fr 2fr;
+    padding: 10px 15px;
+    background-color: #e0e0e0; /* Fundo cinza claro do cabeçalho */
+    color: #666;
+    font-weight: bold;
+    font-size: 12px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.listContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Card de Reserva (Linha) */
+.reservationCard {
+    display: grid;
+    grid-template-columns: 2fr 3fr 2fr 1fr 2fr 1fr 2fr;
+    background-color: white;
+    border: 1px solid #ff9800; /* Borda laranja */
+    border-radius: 8px;
+    padding: 15px;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-size: 13px;
+    color: #333;
+}
+
+.reservationCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.reservationCard.selected {
+    background-color: #fff8e1; /* Leve destaque amarelo/creme quando selecionado */
+    border: 2px solid #e67e00;
+}
+
+.bookTitle {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+}
+
+.statusText {
+    text-align: right;
+    font-weight: bold;
+}
+
+/* Cores de Status */
+.statusPending { color: #333; } /* Pendente */
+.statusQueue { color: #ff9800; } /* Aguardando na Fila */
+.statusCancelled { color: #999; text-decoration: line-through; } /* Cancelada */
+.statusApproved { color: #4caf50; } /* Aprovada/Autorizada */
+
+/* --- Coluna da Direita: Sidebar --- */
+.rightColumn {
+    flex: 1;
+    min-width: 300px;
+}
+
+.sidebarTitle {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.approvalCard {
+    background-color: white;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding-bottom: 20px;
+    overflow: hidden;
+    position: sticky;
+    top: 20px;
+}
+
+.cardHeader {
+    background-color: #e67e00; /* Laranja do cabeçalho */
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.cardContent {
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.detailRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    align-items: flex-start;
+}
+
+.label {
+    font-weight: bold;
+    color: #333;
+    width: 80px; /* Largura fixa para alinhar */
+}
+
+.value {
+    color: #555;
+    flex: 1;
+    text-align: right;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    margin-top: 30px;
+}
+
+.btnAuthorize {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btnCancel {
+    background-color: #e57373;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btnAuthorize:disabled, .btnCancel:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.noSelection {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-style: italic;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px dashed #ccc;
+}

@@ -133,6 +133,9 @@ const Header = () => {
                   {/* Links do Dropdown para Admin */}
                   {user.role === 'admin' && (
                     <>
+                      <Link to="/perfil" className={styles.dropdownItem} onClick={closeDropdown}>
+                        Perfil
+                      </Link>
                       <Link to="/controle-reservas" className={styles.dropdownItem} onClick={closeDropdown}>
                         Controle de Reservas
                       </Link>
@@ -154,7 +157,7 @@ const Header = () => {
                   {/* Links do Dropdown para Usuário Comum */}
                   {user.role === 'user' && (
                     <>
-                      <Link to="#" className={styles.dropdownItem} onClick={closeDropdown}>
+                      <Link to="/perfil" className={styles.dropdownItem} onClick={closeDropdown}>
                         Perfil
                       </Link>
                       <div className={styles.dropdownDivider}></div>

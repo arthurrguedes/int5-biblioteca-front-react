@@ -5,18 +5,22 @@ import Home from './pages/Home/Home';
 import LoginScreen from './pages/LoginScreen/LoginScreen';
 import RegisterScreen from './pages/RegisterScreen/RegisterScreen'; 
 import './App.css'; 
-import Catalogue from './pages/Catalogue/Catalogue'; 
+import Catalogue from './pages/Catalogue/Catalogue';
+import Reservas from './pages/Reservas/Reservas';
+import Emprestimos from './pages/Emprestimos/Emprestimos';
+import Contato from './pages/Contato/Contato';
+import SobreNos from './pages/SobreNos/SobreNos';
+import Perfil from './pages/Perfil/Perfil';
+import Estoque from './pages/Estoque/Estoque';
+import ControleReservas from './pages/ControleReservas/ControleReservas';
+import ControleEmprestimos from './pages/ControleEmprestimos/ControleEmprestimos';
+import BookDetails from './pages/BookDetails/BookDetails';
 
 const HEADER_HEIGHT = '50px'; 
 
 // Componentes de Placeholder para as novas rotas (simulação)
 const Placeholder = ({ title }) => <h1>{title}</h1>;
-const Estoque = () => <Placeholder title="Estoque" />;
-const ControleReservas = () => <Placeholder title="Controle de Reservas" />;
-const ControleEmprestimos = () => <Placeholder title="Controle de Empréstimos" />;
 const Relatorios = () => <Placeholder title="Relatórios" />;
-const Reservas = () => <Placeholder title="Reservas" />;
-const Emprestimos = () => <Placeholder title="Empréstimos" />;
 // Você pode expandir ou criar componentes reais para estes no futuro.
 
 function App() {
@@ -44,11 +48,13 @@ function App() {
           <Route path="/relatorios" element={<Relatorios />} />
           
           {/* Rotas Comuns */}
-          <Route path="/contato" element={<Placeholder title="Contato" />} />
-          <Route path="/sobre-nos" element={<Placeholder title="Sobre Nós" />} />
+          <Route path="/contato" element={<Contato />} />
+          <Route path="/sobre-nos" element={<SobreNos />} />
+          <Route path="/perfil" element={<Perfil />} />
+          
 
           {/* Rota de Detalhe de Livro (Exemplo: /catalogo/livro/1) */}
-          <Route path="/catalogo/livro/:id" element={<Placeholder title="Detalhe do Livro" />} />
+          <Route path="/catalogo/livro/:id" element={<BookDetails />} />
         </Routes>
       </div>
     </div>

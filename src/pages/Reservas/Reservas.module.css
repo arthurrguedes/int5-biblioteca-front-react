@@ -1,0 +1,255 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+
+.contentLayout {
+    display: flex;
+    gap: 30px;
+}
+
+/* Coluna da Esquerda - Lista */
+.leftColumn {
+    flex: 2;
+}
+
+.pageTitle {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+/* Barra de Busca */
+.searchBar {
+    display: flex;
+    background-color: white;
+    border-radius: 8px;
+    padding: 10px 20px;
+    align-items: center;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.searchInput {
+    flex-grow: 1;
+    border: none;
+    font-size: 16px;
+    outline: none;
+    color: #666;
+}
+
+.searchIcon {
+    color: #38006b;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Cards de Livros */
+.bookCard {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s;
+}
+
+.bookCard.selected {
+    border: 2px solid #ff9800;
+}
+
+.bookInfo {
+    display: flex;
+    gap: 20px;
+}
+
+.bookCover {
+    width: 80px;
+    height: 100px;
+    background-color: #ddd;
+    border-radius: 4px;
+}
+
+.bookDetails h3 {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bookDetails p {
+    margin: 2px 0;
+    font-size: 13px;
+    color: #555;
+}
+
+.statusText {
+    margin-top: 10px !important;
+    font-weight: bold;
+    font-size: 14px !important;
+}
+
+.statusAvailable { color: #4caf50; }
+.statusUnavailable { color: #f44336; }
+.statusReserved { color: #ff9800; }
+
+/* Ações do Card */
+.bookActions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.quantityControl {
+    display: flex;
+    align-items: center;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.qtyBtn {
+    border: none;
+    background: none;
+    width: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+}
+
+.qtyValue {
+    margin: 0 5px;
+    font-size: 14px;
+}
+
+.actionButton {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    min-width: 120px;
+    font-size: 14px;
+}
+
+.btnGreen { background-color: #4caf50; }
+.btnOrange { background-color: #ff9800; }
+.btnRed { background-color: #e57373; }
+
+.myLoansButton {
+    background-color: #2d2d2d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+/* Coluna da Direita - Sidebar */
+.rightColumn {
+    flex: 1;
+    min-width: 300px;
+}
+
+.sidebarCard {
+    background-color: white;
+    border-radius: 12px;
+    border: 1px solid #ff9800; /* Borda tracejada/estilo da imagem */
+    border-style: dashed; 
+    padding: 20px;
+    position: sticky;
+    top: 80px;
+    height: fit-content;
+}
+
+.orangeHeader {
+    background-color: #e67e00;
+    height: 30px;
+    border-radius: 12px 12px 0 0;
+    margin: -21px -21px 20px -21px; /* Ajuste para cobrir o padding */
+}
+
+.sidebarBookInfo {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.sidebarCover {
+    width: 50px;
+    height: 70px;
+    background-color: #ddd;
+}
+
+.sidebarText h4 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.sidebarText p {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.label { font-weight: bold; color: #333; }
+.value { color: #555; }
+
+.rulesSection {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.rulesTitle {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.rulesText {
+    font-size: 11px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.confirmButton {
+    width: 100%;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    margin-top: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.noSelection {
+    text-align: center;
+    color: #999;
+    padding: 40px 0;
+    font-style: italic;
+}

@@ -1,0 +1,177 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    min-height: 80vh;
+}
+
+/* Layout de Duas Colunas */
+.contentLayout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+/* Sidebar (Reutilizando estilo do Catálogo) */
+.sidebar {
+    width: 250px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+    flex-shrink: 0;
+}
+
+.sidebarTitle {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ff9800;
+    padding-bottom: 5px;
+}
+
+.categoryList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.categoryItem {
+    padding: 10px 0;
+    cursor: pointer;
+    font-size: 15px;
+    color: #333;
+    transition: color 0.2s;
+}
+
+.categoryItem:hover {
+    color: #ff9800;
+}
+
+/* Conteúdo Principal */
+.mainContent {
+    flex-grow: 1;
+}
+
+.headerSection {
+    display: flex;
+    justify-content: flex-end; /* Busca alinhada à direita */
+    margin-bottom: 30px;
+}
+
+.searchBar {
+    display: flex;
+    background-color: white;
+    border-radius: 25px;
+    padding: 8px 20px;
+    align-items: center;
+    width: 300px;
+    border: 1px solid #ddd;
+}
+
+.searchInput {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #666;
+}
+
+.searchIcon {
+    color: #38006b;
+    cursor: pointer;
+}
+
+/* Card do Livro */
+.bookDetailCard {
+    background-color: white;
+    border: 1px solid #ff9800; /* Borda Laranja */
+    border-radius: 8px;
+    padding: 40px;
+    position: relative; /* Para posicionar o badge */
+    margin-top: 20px;
+    display: flex;
+    gap: 40px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* Etiqueta de Categoria (Aba Laranja) */
+.categoryBadge {
+    position: absolute;
+    top: -15px; /* Sobe para ficar na linha da borda */
+    left: 20px;
+    background-color: #e67e00;
+    color: white;
+    padding: 8px 30px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Imagem do Livro */
+.bookCover {
+    width: 220px;
+    height: 320px;
+    background-color: #d3d3d3; /* Cinza do placeholder */
+    flex-shrink: 0;
+    border-radius: 4px;
+}
+
+/* Informações do Livro */
+.bookInfo {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #000;
+    margin: 0 0 5px 0;
+}
+
+.author {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.metadata {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.reserveButton {
+    background-color: #e67e00;
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background-color 0.2s;
+}
+
+.reserveButton:hover {
+    background-color: #cc7000;
+}
+
+.notFound {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+    color: #666;
+}

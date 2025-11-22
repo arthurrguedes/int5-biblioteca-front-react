@@ -6,18 +6,6 @@
     background-color: #f0f0f0;
 }
 
-/* Breadcrumb (Ex: Home / Catálogo / Humor) */
-.breadcrumb {
-    font-size: 14px;
-    color: #6a5acd; /* Roxo mais claro */
-    margin-bottom: 20px;
-}
-
-.breadcrumb span {
-    color: #38006b; /* Roxo principal */
-    font-weight: bold;
-}
-
 /* Layout de duas colunas */
 .contentLayout {
     display: flex;

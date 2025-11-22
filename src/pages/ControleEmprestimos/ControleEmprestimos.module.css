@@ -1,0 +1,141 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    min-height: 80vh;
+}
+
+.pageTitle {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* --- Filtros --- */
+.filtersBar {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    align-items: flex-end;
+}
+
+.filterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Estilo dos Selects e Inputs para ficarem iguais à imagem */
+.selectInput, .textInput {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px; /* Levemente arredondado */
+    background-color: white;
+    font-size: 14px;
+    color: #555;
+    outline: none;
+}
+
+.selectInput {
+    min-width: 150px;
+    cursor: pointer;
+}
+
+.textInput {
+    min-width: 300px;
+}
+
+/* --- Tabela --- */
+.tableContainer {
+    background-color: white;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Grid Layout para alinhar colunas */
+.gridHeader, .gridRow {
+    display: grid;
+    /* Definição das colunas: # | Usuário | Título | Autor | Ano | Início | Término | Devolução | Status | Ações */
+    grid-template-columns: 0.5fr 2fr 2.5fr 2fr 0.8fr 1.2fr 1.2fr 1.2fr 1.2fr 1.5fr;
+    padding: 12px 15px;
+    align-items: center;
+    font-size: 13px;
+}
+
+.gridHeader {
+    background-color: #3d3d5c; /* Roxo escuro/azulado da imagem */
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.gridRow {
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+/* Efeito zebrado (Striped) igual à imagem */
+.gridRow:nth-child(even) {
+    background-color: #e0e0e0; /* Cinza da imagem */
+}
+
+.gridRow:nth-child(odd) {
+    background-color: white;
+}
+
+.gridRow:hover {
+    background-color: #f0f8ff; /* Destaque ao passar o mouse */
+}
+
+/* Status Badges */
+.statusBadge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 11px;
+    text-align: center;
+    width: fit-content;
+}
+
+.statusVigente { background-color: #e8f5e9; color: #2e7d32; }
+.statusAtrasado { background-color: #ffebee; color: #c62828; }
+.statusDevolvido { background-color: #e0e0e0; color: #616161; }
+
+/* Botões de Ação */
+.actionButtons {
+    display: flex;
+    gap: 5px;
+}
+
+.btnIcon {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.btnCheck { color: #4caf50; } /* Devolver */
+.btnCheck:hover { background-color: #e8f5e9; }
+
+.btnRenew { color: #2196f3; } /* Renovar */
+.btnRenew:hover { background-color: #e3f2fd; }
+
+.noResults {
+    padding: 40px;
+    text-align: center;
+    color: #999;
+    font-style: italic;
+}

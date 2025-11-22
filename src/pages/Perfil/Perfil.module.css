@@ -1,0 +1,146 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pageTitle {
+    color: #38006b;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Card Principal */
+.profileCard {
+    background-color: #f2e7d9; /* Tom bege similar à imagem */
+    border: 1px solid #ff9800; /* Borda laranja */
+    border-radius: 12px;
+    padding: 40px 60px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* Avatar */
+.avatarContainer {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.avatarCircle {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #ff9800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    font-size: 40px;
+    color: #e67e00;
+}
+
+.adminTag {
+    position: absolute;
+    bottom: 0;
+    right: -10px;
+    background-color: #38006b;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Campos de Informação */
+.infoList {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: left; /* Alinhamento à esquerda conforme imagem */
+}
+
+.infoGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    color: #e67e00; /* Laranja escuro */
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.value {
+    color: #555;
+    font-size: 15px;
+}
+
+/* Inputs para Edição */
+.input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    background-color: white;
+    color: #333;
+}
+
+.input:focus {
+    border-color: #38006b;
+}
+
+/* Botões */
+.actionButtons {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
+}
+
+.btnPrimary {
+    background-color: #38006b; /* Roxo */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    min-width: 100px;
+}
+
+.btnPrimary:hover {
+    background-color: #2a0052;
+}
+
+.btnSecondary {
+    background-color: #555; /* Cinza escuro para Limpar/Cancelar */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    min-width: 100px;
+}
+
+.btnSecondary:hover {
+    background-color: #333;
+}

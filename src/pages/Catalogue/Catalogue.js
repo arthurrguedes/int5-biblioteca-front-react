@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import styles from './Catalogue.module.css';
 import { FaSearch, FaBookOpen } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'; // 1. Importação do Componente
 
 // --- Dados Mockados para Simulação ---
 const MOCK_BOOKS = [
@@ -14,7 +15,6 @@ const MOCK_BOOKS = [
   { id: 7, title: 'It: A Coisa', author: 'Stephen King', category: 'Terror', isbn: '2222222222222', edition: 'Edição 4', pages: 1138, description: 'O clássico do terror.' },
   { id: 8, title: 'A Semente do Amanhã', author: 'Roberto C. Martin', category: 'Tecnologia', isbn: '3333333333333', edition: 'Edição 1', pages: 200, description: 'Um guia sobre sustentabilidade.' },
   { id: 9, title: 'Misterio no Expresso Oriente', author: 'Agatha Christie', category: 'Mistério', isbn: '4444444444444', edition: 'Edição 1', pages: 350, description: 'Um caso clássico de detetive.' },
-  // Adicione mais livros conforme as categorias
   { id: 10, title: 'O Senhor dos Anéis', author: 'J.R.R. Tolkien', category: 'Fantasia', isbn: '5555555555555', edition: 'Edição 1', pages: 1200, description: 'A jornada épica pela Terra Média.' },
   { id: 11, title: 'Piquenique na Relva', author: 'Autor Hilario', category: 'Humor', isbn: '6666666666666', edition: 'Edição 2', pages: 150, description: 'Contos engraçados.' },
   { id: 12, title: 'O Monge e o Executivo', author: 'James C. Hunter', category: 'Autoajuda', isbn: '7777777777777', edition: 'Edição 1', pages: 180, description: 'Liderança e serviço.' },
@@ -27,9 +27,7 @@ const CATEGORIES = [
 ];
 // --- Fim dos Dados Mockados ---
 
-// Componente para o Card de Livro (Reutilizado da imagem)
 const BookCard = ({ book }) => (
-  // O link real deve ser dinâmico (ex: /catalogo/livro/1)
   <Link to={`/catalogo/livro/${book.id}`} className={styles.bookCard}>
     <div className={styles.bookPlaceholder}>
       <FaBookOpen style={{ fontSize: '40px', color: '#ccc' }} />
@@ -45,23 +43,19 @@ const Catalogue = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   
-  // Função para lidar com a seleção de categoria
   const handleCategoryClick = (category) => {
-    setSelectedCategory(category === selectedCategory ? null : category); // Toggle
-    setSearchTerm(''); // Limpa a busca ao selecionar categoria
+    setSelectedCategory(category === selectedCategory ? null : category);
+    setSearchTerm(''); 
   };
 
-  // Lógica de filtragem e busca
   const filteredBooks = useMemo(() => {
     let books = MOCK_BOOKS;
     const lowerSearchTerm = searchTerm.toLowerCase().trim();
 
-    // 1. Filtrar por categoria
     if (selectedCategory) {
       books = books.filter(book => book.category === selectedCategory);
     }
 
-    // 2. Filtrar por termo de busca (título, autor ou categoria)
     if (lowerSearchTerm) {
       books = books.filter(book => 
         book.title.toLowerCase().includes(lowerSearchTerm) ||
@@ -73,22 +67,37 @@ const Catalogue = () => {
     return books;
   }, [selectedCategory, searchTerm]);
 
-  // Função para extrair o título do cabeçalho
   const getHeaderTitle = () => {
-    if (searchTerm) {
-      return `Resultados da busca por: "${searchTerm}"`;
-    }
-    if (selectedCategory) {
-      return selectedCategory;
-    }
+    if (searchTerm) return `Resultados da busca por: "${searchTerm}"`;
+    if (selectedCategory) return selectedCategory;
     return 'Todos os Livros';
   };
 
+  // 2. Configuração dos itens do Breadcrumb
+  const breadcrumbItems = useMemo(() => {
+    // Itens base que sempre aparecem
+    const items = [
+      { label: 'Home', path: '/' },
+      { label: 'Catálogo', path: '/catalogo' }
+    ];
+
+    // Se houver busca ou categoria selecionada, adicionamos como o nível atual
+    if (searchTerm) {
+      items.push({ label: `Busca: "${searchTerm}"`, path: '#' });
+    } else if (selectedCategory) {
+      items.push({ label: selectedCategory, path: '#' });
+    }
+    // Nota: Se não houver filtro, 'Catálogo' será o último item e o componente Breadcrumb
+    // automaticamente o renderizará como texto (não clicável), o que é o comportamento correto.
+
+    return items;
+  }, [searchTerm, selectedCategory]);
+
   return (
     <div className={styles.catalogueContainer}>
-      {/* Breadcrumb simulado */}
-      <div className={styles.breadcrumb}>
-        / (usuário) / Catálogo / <span>{getHeaderTitle()}</span>
+      {/* 3. Substituição do breadcrumb simulado pelo Componente Real */}
+      <div style={{ marginBottom: '20px' }}>
+        <Breadcrumb items={breadcrumbItems} />
       </div>
 
       <div className={styles.contentLayout}>
@@ -112,7 +121,6 @@ const Catalogue = () => {
         {/* Conteúdo Principal */}
         <div className={styles.mainContent}>
           
-          {/* Barra de Busca */}
           <div className={styles.searchBar}>
             <input
               type="text"
@@ -121,15 +129,11 @@ const Catalogue = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <button 
-              className={styles.searchButton}
-              onClick={() => { /* A busca é automática pelo useMemo, mas o botão pode ser usado para focar */ }}
-            >
+            <button className={styles.searchButton}>
               <FaSearch />
             </button>
           </div>
 
-          {/* Listagem de Livros */}
           <div className={styles.categoryHeader}>
             <span className={styles.categoryHeaderText}>{getHeaderTitle()}</span>
           </div>

@@ -1,0 +1,150 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    min-height: 80vh;
+}
+
+.pageTitle {
+    color: #333;
+    margin-bottom: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #38006b; /* Roxo do tema */
+}
+
+.contentGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
+    gap: 40px;
+    margin-top: 30px;
+}
+
+/* Estilo do Card com Título na Borda */
+.card {
+    background-color: white;
+    border: 1px solid #ff9800; /* Laranja */
+    border-radius: 8px;
+    padding: 40px 30px 30px 30px; /* Padding top maior para o texto não bater no título */
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.cardHeaderBadge {
+    position: absolute;
+    top: -18px; /* Faz o badge subir e ficar na linha da borda */
+    left: 20px;
+    background-color: #e67e00; /* Laranja escuro */
+    color: white;
+    padding: 8px 25px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+}
+
+/* Área de Informações */
+.infoGroup {
+    margin-bottom: 25px;
+}
+
+.infoLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    color: #e67e00;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.infoText {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+    margin-left: 0; 
+}
+
+.socialLinks {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.socialItem {
+    color: #38006b;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s;
+}
+
+.socialItem:hover {
+    color: #ff9800;
+}
+
+/* Área do Formulário */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.input, .textarea {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    background-color: #fffaf5; /* Leve tom creme */
+}
+
+.input:focus, .textarea:focus {
+    border-color: #ff9800;
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.submitButton {
+    background-color: #4caf50; /* Verde para confirmar envio */
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.submitButton:hover {
+    background-color: #45a049;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .contentGrid {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+    }
+}

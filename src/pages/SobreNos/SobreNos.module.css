@@ -1,0 +1,68 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    min-height: 80vh;
+}
+
+.pageTitle {
+    color: #38006b;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center; /* Centraliza o título */
+}
+
+.description {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 40px;
+    max-width: 900px;
+    
+    /* AJUSTE 1: Centralização do bloco e do texto */
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center; 
+}
+
+/* Card "O que oferecemos" */
+.offerCard {
+    background-color: #faebd7;
+    padding: 40px 30px; /* Aumentei um pouco o padding vertical */
+    border-left: 8px solid #e67e00;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.offerTitle {
+    color: #e67e00;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 25px;
+    text-align: center; /* Garante que o título do card também fique centralizado */
+}
+
+.offerList {
+    /* AJUSTE 2: Remoção das bolinhas e centralização */
+    list-style-type: none; 
+    padding-left: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.offerItem {
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .offerCard {
+        padding: 20px;
+    }
+}

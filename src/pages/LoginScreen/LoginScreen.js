@@ -1,15 +1,34 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; 
 import styles from './LoginScreen.module.css';
 import { FaLock, FaEnvelope, FaUserCircle } from 'react-icons/fa';
+import { useAuth } from '../../contexts/AuthContext'; 
 
 const LoginScreen = () => {
   const [userType, setUserType] = useState('usuario'); // 'usuario' ou 'bibliotecario'
-  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth(); // Usar o hook de autenticação
+  const navigate = useNavigate(); // Hook de navegação
+
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log(`Tentativa de login como: ${userType}`);
-    // Adicionar aqui a lógica real de autenticação
+    
+    // Admin login simulation: use 'admin' for email and 'admin123' for password
+    const isLibrarian = userType === 'bibliotecario';
+
+    const result = login(email, password, isLibrarian);
+
+    if (result.success) {
+      // Redireciona com base na role
+      if (result.role === 'admin') {
+        navigate('/'); // Redireciona para home ou painel admin
+      } else {
+        navigate('/'); // Redireciona para home do usuário
+      }
+    } else {
+      alert(result.message); // Exibe mensagem de erro
+    }
   };
 
   return (
@@ -41,13 +60,27 @@ const LoginScreen = () => {
           {/* Campo Email */}
           <div className={styles.inputGroup}>
             <FaEnvelope className={styles.inputIcon} />
-            <input type="email" placeholder="Digite seu email" required className={styles.inputField} />
+            <input 
+              type="text" // Alterado para text para aceitar 'admin'
+              placeholder={userType === 'bibliotecario' ? 'Usuário: admin' : 'Digite seu email'} 
+              required 
+              className={styles.inputField} 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
 
           {/* Campo Senha */}
           <div className={styles.inputGroup}>
             <FaLock className={styles.inputIcon} />
-            <input type="password" placeholder="Digite sua senha" required className={styles.inputField} />
+            <input 
+              type="password" 
+              placeholder={userType === 'bibliotecario' ? 'Senha: admin123' : 'Digite sua senha'} 
+              required 
+              className={styles.inputField} 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
 
           <p className={styles.forgotPassword}>

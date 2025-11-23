@@ -1,59 +1,81 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import styles from './Estoque.module.css';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import { FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-
-// Categorias
-const CATEGORIES = [
-  'Todos os Livros',
-  'Humor', 'Tecnologia', 'Romance', 'Autoajuda', 'Terror', 
-  'Ficção Científica', 'Fantasia', 'Mistério', 'Aventura', 'Histórico'
-];
-
-// Dados de Estoque Sincronizados com o Catálogo
-// Adicionei campos 'totalStock', 'rented' e 'reserved' para simular o status
-const INITIAL_INVENTORY = [
-  { id: 1, title: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kelly Cesar', category: 'Humor', totalStock: 20, rented: 2, reserved: 1 },
-  { id: 2, title: 'O Guia do Mochileiro das Galáxias', author: 'Douglas Adams', category: 'Ficção Científica', totalStock: 5, rented: 5, reserved: 0 }, // Indisponível
-  { id: 3, title: 'A Culpa é das Estrelas', author: 'John Green', category: 'Romance', totalStock: 15, rented: 3, reserved: 0 },
-  { id: 4, title: 'Código Limpo', author: 'Robert C. Martin', category: 'Tecnologia', totalStock: 10, rented: 8, reserved: 1 }, // Último exemplar (10 - 9 = 1)
-  { id: 5, title: 'Use a Cabeça! Java', author: 'Kathy Sierra', category: 'Tecnologia', totalStock: 8, rented: 0, reserved: 0 },
-  { id: 6, title: 'O Poder do Hábito', author: 'Charles Duhigg', category: 'Autoajuda', totalStock: 12, rented: 4, reserved: 2 },
-  { id: 7, title: 'It: A Coisa', author: 'Stephen King', category: 'Terror', totalStock: 3, rented: 2, reserved: 1 }, // Indisponível
-  { id: 8, title: 'A Semente do Amanhã', author: 'Roberto C. Martin', category: 'Tecnologia', totalStock: 6, rented: 1, reserved: 0 },
-  { id: 9, title: 'Misterio no Expresso Oriente', author: 'Agatha Christie', category: 'Mistério', totalStock: 5, rented: 4, reserved: 0 }, // Último exemplar
-  { id: 10, title: 'O Senhor dos Anéis', author: 'J.R.R. Tolkien', category: 'Fantasia', totalStock: 4, rented: 0, reserved: 0 },
-  { id: 11, title: 'Piquenique na Relva', author: 'Autor Hilario', category: 'Humor', totalStock: 2, rented: 0, reserved: 0 },
-  { id: 12, title: 'O Monge e o Executivo', author: 'James C. Hunter', category: 'Autoajuda', totalStock: 20, rented: 10, reserved: 5 },
-  { id: 13, title: 'O Labirinto do Fauno', author: 'Guillermo del Toro', category: 'Fantasia', totalStock: 7, rented: 2, reserved: 1 },
-];
+import { bookService } from '../../services/bookService'; // Importando o serviço
 
 const Estoque = () => {
-  const [inventory, setInventory] = useState(INITIAL_INVENTORY);
+  const [categories, setCategories] = useState(['Todos os Livros']);
+  const [inventory, setInventory] = useState([]); // Inicializa vazio
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos os Livros');
 
-  // Lógica para atualizar o estoque TOTAL (Ação do bibliotecário)
-  const handleStockChange = (id, delta) => {
-    setInventory(prev => prev.map(item => {
-      if (item.id === id) {
-        const newTotal = Math.max(0, item.totalStock + delta);
-        // Validação: Não reduzir abaixo do que já está em uso
-        if (newTotal < (item.rented + item.reserved)) {
-          toast.error("Não é possível reduzir o estoque físico abaixo da quantidade emprestada/reservada.");
-          return item;
-        }
-        return { ...item, totalStock: newTotal };
+  // Carrega Dados (Livros e Gêneros)
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const [booksData, genresData] = await Promise.all([
+          bookService.getAllBooks(),
+          bookService.getGenres()
+        ]);
+
+        // Adiciona campos de segurança caso o backend não mande rented/reserved ainda
+        const safeBooksData = booksData.map(book => ({
+            ...book,
+            rented: book.rented || 0,
+            reserved: book.reserved || 0
+        }));
+
+        setInventory(safeBooksData);
+        setCategories(['Todos os Livros', ...genresData]);
+      } catch (error) {
+        toast.error("Erro ao carregar estoque.");
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
-      return item;
-    }));
+    };
+    loadData();
+  }, []);
+
+  // Lógica para atualizar o estoque no backend e no state
+  const handleStockChange = async (id, delta) => {
+    // Encontra o item atual para calcular o novo valor
+    const currentItem = inventory.find(item => item.id === id);
+    if (!currentItem) return;
+
+    const newTotal = Math.max(0, currentItem.totalStock + delta);
+
+    // Validação Lógica (Front-end)
+    if (newTotal < (currentItem.rented + currentItem.reserved)) {
+      toast.error("Não é possível reduzir o estoque físico abaixo da quantidade em uso.");
+      return;
+    }
+
+    // Chamada à API
+    const success = await bookService.updateStock(id, newTotal);
+
+    // Se sucesso, atualiza o visual
+    if (success) {
+        setInventory(prev => prev.map(item => {
+            if (item.id === id) {
+                return { ...item, totalStock: newTotal };
+            }
+            return item;
+        }));
+        toast.success("Estoque atualizado!");
+    } else {
+        toast.error("Erro ao salvar no banco de dados.");
+    }
   };
 
   // Filtragem
   const filteredItems = useMemo(() => {
     return inventory.filter(item => {
-      const matchesCategory = selectedCategory === 'Todos os Livros' ? true : item.category === selectedCategory;
+      const matchesCategory = selectedCategory === 'Todos os Livros' ? true : item.category.includes(selectedCategory);
       
       const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             item.author.toLowerCase().includes(searchTerm.toLowerCase());
@@ -87,7 +109,8 @@ const Estoque = () => {
         <div className={styles.sidebar}>
           <div className={styles.sidebarTitle}>Nosso acervo</div>
           <ul className={styles.categoryList}>
-            {CATEGORIES.map(cat => (
+            {/* CORREÇÃO: Usar 'categories' do estado, não 'CATEGORIES' */}
+            {categories.map(cat => (
               <li 
                 key={cat} 
                 className={`${styles.categoryItem} ${selectedCategory === cat ? styles.active : ''}`}
@@ -125,42 +148,42 @@ const Estoque = () => {
           </div>
 
           <div className={styles.stockList}>
-            {filteredItems.length > 0 ? (
-              filteredItems.map(item => {
-                const status = getItemStatus(item);
-                
-                return (
-                  <div key={item.id} className={styles.stockCard}>
+            {loading ? <p style={{padding: 20}}>Carregando estoque...</p> : (
+                filteredItems.length > 0 ? (
+                filteredItems.map(item => {
+                    const status = getItemStatus(item);
                     
-                    {/* Coluna 1: Checkbox + Info */}
-                    <div className={styles.bookInfo}>
-                      <input type="checkbox" className={styles.checkbox} />
-                      <div className={styles.bookCover}></div>
-                      <div className={styles.bookDetails}>
-                        <h3>{item.title}</h3>
-                        <p><strong>Autor(a):</strong> {item.author}</p>
-                        {/* Exibição opcional de detalhes internos para depuração/gestão */}
-                        {/* <p style={{fontSize: '10px', color: '#999'}}>Total: {item.totalStock} | Emp: {item.rented} | Res: {item.reserved}</p> */}
-                      </div>
-                    </div>
+                    return (
+                    <div key={item.id} className={styles.stockCard}>
+                        
+                        {/* Coluna 1: Checkbox + Info */}
+                        <div className={styles.bookInfo}>
+                        <input type="checkbox" className={styles.checkbox} />
+                        <div className={styles.bookCover}></div>
+                        <div className={styles.bookDetails}>
+                            <h3>{item.title}</h3>
+                            <p><strong>Autor(a):</strong> {item.author}</p>
+                        </div>
+                        </div>
 
-                    {/* Coluna 2: Controle de Estoque (Ação Admin) */}
-                    <div className={styles.stockControl}>
-                      <button className={styles.qtyBtn} onClick={() => handleStockChange(item.id, -1)}>-</button>
-                      <span className={styles.qtyValue}>{status.count}</span>
-                      <button className={styles.qtyBtn} onClick={() => handleStockChange(item.id, 1)}>+</button>
-                    </div>
+                        {/* Coluna 2: Controle de Estoque (Ação Admin) */}
+                        <div className={styles.stockControl}>
+                        <button className={styles.qtyBtn} onClick={() => handleStockChange(item.id, -1)}>-</button>
+                        <span className={styles.qtyValue}>{item.totalStock}</span>
+                        <button className={styles.qtyBtn} onClick={() => handleStockChange(item.id, 1)}>+</button>
+                        </div>
 
-                    {/* Coluna 3: Status Texto */}
-                    <div className={`${styles.statusBadge} ${status.style}`}>
-                      {status.label}
-                    </div>
+                        {/* Coluna 3: Status Texto */}
+                        <div className={`${styles.statusBadge} ${status.style}`}>
+                        {status.label}
+                        </div>
 
-                  </div>
-                );
-              })
-            ) : (
-              <div className={styles.noResults}>Nenhum livro encontrado nesta categoria.</div>
+                    </div>
+                    );
+                })
+                ) : (
+                <div className={styles.noResults}>Nenhum livro encontrado nesta categoria.</div>
+                )
             )}
           </div>
 

@@ -58,11 +58,13 @@ export const AuthProvider = ({ children }) => {
         role: data.user.role || (isLibrarian ? 'admin' : 'usuario')
       };
 
+      const realToken = data.token;
+
       setUser(userData);
       setToken('token-dummy-jwt'); // Futuramente seu back retornará um token real aqui
       
       localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
-      localStorage.setItem(STORAGE_KEY_TOKEN, 'token-dummy-jwt');
+      localStorage.setItem(STORAGE_KEY_TOKEN, realToken);
 
       return { success: true };
 
@@ -100,29 +102,53 @@ export const AuthProvider = ({ children }) => {
     }
   }, [login]); // Dependência do login ao usar auto-login
 
-  const updateProfile = useCallback(async (dadosParaAtualizar) => {
-    // ID do user logado
+    const logout = useCallback(() => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem(STORAGE_KEY_USER);
+    localStorage.removeItem(STORAGE_KEY_TOKEN);
+  }, []);
+
+  // UPDATE
+  const updateProfile = useCallback(async (dados) => {
     if (!user?.id) {
-      return { success: false, message: "Usuário não identificado." };
+        return { success: false, message: "Usuário não identificado." };
     }
 
     try {
+      const headers = {
+        'Authorization': `Bearer ${token}` // Envia o token salvo no contexto
+      };
+
+      let body;
+
+      if (dados instanceof FormData) {
+        body = dados;
+      } else {
+        headers['Content-Type'] = 'application/json';
+        body = JSON.stringify(dados);
+      }
+
       const response = await fetch(`${API_URL}/users/${user.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dadosParaAtualizar)
+        headers: headers,
+        body: body
       });
 
       const data = await response.json();
-
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+             logout(); 
+             return { success: false, message: "Sessão expirada. Faça login novamente." };
+        }
         return { success: false, message: data.message || 'Erro ao atualizar' };
       }
 
       const userAtualizado = { 
         ...user, 
         username: data.user.nome,
-        email: data.user.email
+        email: data.user.email,
+        foto: data.user.foto
       };
 
       setUser(userAtualizado);
@@ -131,17 +157,10 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
 
     } catch (error) {
-      console.error("Erro ao atualizar perfil:", error);
+      console.error("Erro update:", error);
       return { success: false, message: 'Erro de conexão.' };
     }
-  }, [user]);
-
-  const logout = useCallback(() => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem(STORAGE_KEY_USER);
-    localStorage.removeItem(STORAGE_KEY_TOKEN);
-  }, []);
+  }, [user, token, logout]);
 
   const isLoggedIn = !!user;
 

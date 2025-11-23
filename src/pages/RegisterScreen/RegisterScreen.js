@@ -1,31 +1,29 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Importar useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import styles from './RegisterScreen.module.css';
 import { FaLock, FaEnvelope, FaUserCircle, FaCalendarAlt } from 'react-icons/fa';
-import { useAuth } from '../../contexts/AuthContext'; // Importar useAuth
+import { useAuth } from '../../contexts/AuthContext';
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // Data de nascimento não será usada no AuthContext, mas mantemos o estado
   const [dob, setDob] = useState(''); 
 
-  const { register } = useAuth(); // Usar o hook de autenticação
+  const { register } = useAuth(); 
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     
-    // Lógica de cadastro simulada: sempre loga como 'user'
-    const result = register(username, email, password);
+    const result = await register(username, email, password, dob);
 
     if (result.success) {
       toast.success('Cadastro realizado com sucesso! Bem-vindo(a).');
-      navigate('/');
+      navigate('/login');
     } else {
-      toast.error('Erro ao realizar cadastro. Tente novamente.');
+      toast.error(result.message || 'Erro ao realizar cadastro.');
     }
   };
 
@@ -38,7 +36,6 @@ const RegisterScreen = () => {
         </div>
 
         <form onSubmit={handleRegister} className={styles.form}>
-          {/* Campo Usuário */}
           <div className={styles.inputGroup}>
             <FaUserCircle className={styles.inputIcon} />
             <input 
@@ -51,7 +48,6 @@ const RegisterScreen = () => {
             />
           </div>
 
-          {/* Campo Email */}
           <div className={styles.inputGroup}>
             <FaEnvelope className={styles.inputIcon} />
             <input 
@@ -64,7 +60,6 @@ const RegisterScreen = () => {
             />
           </div>
 
-          {/* Campo Senha */}
           <div className={styles.inputGroup}>
             <FaLock className={styles.inputIcon} />
             <input 
@@ -77,7 +72,6 @@ const RegisterScreen = () => {
             />
           </div>
           
-          {/* Campo Data de Nascimento */}
           <div className={styles.inputGroup}>
             <FaCalendarAlt className={styles.inputIcon} />
             <input 

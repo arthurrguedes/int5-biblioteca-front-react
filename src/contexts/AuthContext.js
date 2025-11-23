@@ -1,18 +1,15 @@
 import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
-// 1. Cria o Contexto
 const AuthContext = createContext(null);
 
-// Dados de teste (simulando backend)
-const ADMIN_CREDENTIALS = { user: 'admin', password: 'admin123' };
+// URL do API Gateway
+const API_URL = 'http://localhost:3001';
 
-// Chaves para o localStorage
 const STORAGE_KEY_USER = '@BibliotecaPlus:user';
 const STORAGE_KEY_TOKEN = '@BibliotecaPlus:token';
 
-// 2. Provedor de Contexto
 export const AuthProvider = ({ children }) => {
-  // Inicializa o estado lendo do localStorage (Persistência)
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem(STORAGE_KEY_USER);
     return storedUser ? JSON.parse(storedUser) : null;
@@ -22,78 +19,137 @@ export const AuthProvider = ({ children }) => {
     return localStorage.getItem(STORAGE_KEY_TOKEN);
   });
 
-  // Simula a lógica de login com base em credenciais
-  const login = useCallback((email, password, isLibrarian) => {
-    let role = 'user';
-    let username = email.split('@')[0];
-    let simulatedToken = `fake-jwt-${username}-${role}-token`;
+  // --- LOGIN ---
+  const login = useCallback(async (identifier, password, isLibrarian) => {
+    try {
+      // Define o endpoint baseado no tipo de usuário
+      // Se for bibliotecário, chama /bibliotecarios/login, senão /users/login
+      const endpoint = isLibrarian ? '/bibliotecarios/login' : '/users/login';
+      
+      // O back-end espera { email, senha } para usuário ou { login, senha } para bibliotecário
+      const body = isLibrarian 
+        ? { login: identifier,yb: password } // Ajuste se o back esperar senha
+        : { email: identifier, senha: password };
 
-    if (isLibrarian) {
-      if (email === ADMIN_CREDENTIALS.user && password === ADMIN_CREDENTIALS.password) {
-        role = 'admin';
-        username = ADMIN_CREDENTIALS.user;
-        simulatedToken = `fake-jwt-${username}-${role}-token`;
-      } else {
-        return { success: false, message: 'Credenciais de Bibliotecário inválidas.' };
+        // Users: { email, senha }
+        // Bibliotecarios: { login, senha }
+
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            [isLibrarian ? 'login' : 'email']: identifier,
+            senha: password 
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { success: false, message: data.message || 'Erro ao fazer login' };
       }
-    } else {
-      if (!email || !password) {
-        return { success: false, message: 'Preencha todos os campos.' };
+
+      // Padronizando o objeto user para o front-end
+      // O Front usa username, o banco devolve nome
+      const userData = {
+        id: data.user.id,
+        username: data.user.nome, 
+        email: data.user.email || null, // Bibliotecário não tem email no retorno atual
+        role: data.user.role || (isLibrarian ? 'admin' : 'usuario')
+      };
+
+      setUser(userData);
+      setToken('token-dummy-jwt'); // Futuramente seu back retornará um token real aqui
+      
+      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
+      localStorage.setItem(STORAGE_KEY_TOKEN, 'token-dummy-jwt');
+
+      return { success: true };
+
+    } catch (error) {
+      console.error("Erro de conexão:", error);
+      return { success: false, message: 'Erro de conexão com o servidor.' };
+    }
+  }, []);
+
+  // --- CADASTRO (Apenas Usuários Comuns) ---
+  const register = useCallback(async (nome, email, password, dataNascimento) => {
+    try {
+      const response = await fetch(`${API_URL}/users/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome,
+          email,
+          senha: password,
+          dataNascimento // Formato esperado: YYYY-MM-DD
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { success: false, message: data.message || 'Erro ao cadastrar' };
       }
-      role = 'user';
+      
+      return { success: true };
+
+    } catch (error) {
+      console.error("Erro no cadastro:", error);
+      return { success: false, message: 'Erro de conexão ao tentar cadastrar.' };
+    }
+  }, [login]); // Dependência do login ao usar auto-login
+
+  const updateProfile = useCallback(async (dadosParaAtualizar) => {
+    // ID do user logado
+    if (!user?.id) {
+      return { success: false, message: "Usuário não identificado." };
     }
 
-    const userData = { username, role };
+    try {
+      const response = await fetch(`${API_URL}/users/${user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dadosParaAtualizar)
+      });
 
-    // Atualiza estado
-    setUser(userData);
-    setToken(simulatedToken);
+      const data = await response.json();
 
-    // Persiste no localStorage
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
-    localStorage.setItem(STORAGE_KEY_TOKEN, simulatedToken);
+      if (!response.ok) {
+        return { success: false, message: data.message || 'Erro ao atualizar' };
+      }
 
-    console.log(`Login successful as ${role}. Token: ${simulatedToken}`);
-    return { success: true, role };
+      const userAtualizado = { 
+        ...user, 
+        username: data.user.nome,
+        email: data.user.email
+      };
 
-  }, []);
+      setUser(userAtualizado);
+      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userAtualizado));
 
-  // Simula a lógica de cadastro
-  const register = useCallback((username, email, password) => {
-      const simulatedToken = `fake-jwt-${username}-user-token`;
-      const userData = { username, role: 'user' };
-      
-      setUser(userData);
-      setToken(simulatedToken);
+      return { success: true };
 
-      // Persiste no localStorage
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
-      localStorage.setItem(STORAGE_KEY_TOKEN, simulatedToken);
-
-      console.log(`Registration successful as user. Token: ${simulatedToken}`);
-      return { success: true, role: 'user' };
-  }, []);
-
+    } catch (error) {
+      console.error("Erro ao atualizar perfil:", error);
+      return { success: false, message: 'Erro de conexão.' };
+    }
+  }, [user]);
 
   const logout = useCallback(() => {
     setUser(null);
     setToken(null);
-
-    // Remove do localStorage
     localStorage.removeItem(STORAGE_KEY_USER);
     localStorage.removeItem(STORAGE_KEY_TOKEN);
-
-    console.log('Logout successful.');
   }, []);
 
   const isLoggedIn = !!user;
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoggedIn, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoggedIn, login, register, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// 3. Hook para usar o Contexto
 export const useAuth = () => useContext(AuthContext);

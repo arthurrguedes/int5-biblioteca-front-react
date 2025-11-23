@@ -1,25 +1,34 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext'; // Pega dados do contexto
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import styles from './Perfil.module.css';
 import { FaUser } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const Perfil = () => {
-  const { user } = useAuth(); // Pega usuário logado (username, role)
+  const { user, updateProfile } = useAuth(); 
   
   const [isEditing, setIsEditing] = useState(false);
 
-  // Estado inicial com dados simulados + dados do contexto
+  // Estado inicial com dados do usuário logado
   const [profileData, setProfileData] = useState({
-    nome: user?.username || 'Usuário Teste',
-    email: 'usuario@exemplo.com',
-    nascimento: '29/08/1998',
-    telefone: '(21) 98765-4321',
-    endereco: 'Rua Santa Luzia, 123 - Centro, Rio de Janeiro - RJ'
+    nome: user?.username || 'Usuário',
+    email: user?.email || '', 
+    nascimento: 'Data não cadastrada', 
+    telefone: '', 
+    endereco: '' 
   });
 
-  // Estado temporário para edição
+  useEffect(() => {
+    if (user) {
+      setProfileData(prev => ({
+        ...prev,
+        nome: user.username,
+        email: user.email || ''
+      }));
+    }
+  }, [user]);
+
   const [editData, setEditData] = useState(profileData);
 
   const handleInputChange = (e) => {
@@ -28,30 +37,27 @@ const Perfil = () => {
   };
 
   const handleEditClick = () => {
-    setEditData(profileData); // Garante que começa com dados atuais
+    setEditData(profileData);
     setIsEditing(true);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    setEditData(profileData); // Reverte mudanças
+    setEditData(profileData);
   };
 
-  const handleClear = () => {
-    // Limpa apenas os campos editáveis
-    setEditData(prev => ({
-      ...prev,
-      email: '',
-      telefone: '',
-      endereco: ''
-    }));
-  };
+  const handleUpdate = async () => {
+    const result = await updateProfile({
+        email: editData.email
+    });
 
-  const handleUpdate = () => {
-    // Aqui você chamaria a API para salvar
-    setProfileData(editData);
-    setIsEditing(false);
-    toast.success('Perfil atualizado com sucesso!');
+    if (result.success) {
+        toast.success('Perfil atualizado com sucesso!');
+        setProfileData(editData); 
+        setIsEditing(false);
+    } else {
+        toast.error(result.message || "Erro ao atualizar.");
+    }
   };
 
   const breadcrumbItems = [
@@ -62,33 +68,23 @@ const Perfil = () => {
 
   return (
     <div className={styles.container}>
-      <div style={{ width: '100%', maxWidth: '1200px' }}>
-        <Breadcrumb items={breadcrumbItems} />
-      </div>
-      
+      <Breadcrumb items={breadcrumbItems} />
       <h1 className={styles.pageTitle}>Meu Perfil</h1>
 
       <div className={styles.profileCard}>
-        {/* Avatar e Tag */}
         <div className={styles.avatarContainer}>
-          <div className={styles.avatarCircle}>
-            <FaUser />
-          </div>
-          {user?.role === 'admin' && (
-            <div className={styles.adminTag}>Admin</div>
-          )}
+          <div className={styles.avatarCircle}><FaUser /></div>
+          {user?.role === 'admin' && <div className={styles.adminTag}>Admin</div>}
         </div>
 
-        {/* Lista de Informações */}
         <div className={styles.infoList}>
-          
-          {/* Nome (Não editável) */}
+          {/* Nome (Apenas leitura por enquanto) */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Nome Completo:</label>
             <span className={styles.value}>{profileData.nome}</span>
           </div>
 
-          {/* Email (Editável) */}
+          {/* Email (Editável e Salva no Banco) */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Email:</label>
             {isEditing ? (
@@ -104,13 +100,7 @@ const Perfil = () => {
             )}
           </div>
 
-          {/* Nascimento (Não editável) */}
-          <div className={styles.infoGroup}>
-            <label className={styles.label}>Data de Nascimento:</label>
-            <span className={styles.value}>{profileData.nascimento}</span>
-          </div>
-
-          {/* Telefone (Editável) */}
+          {/* Telefone (Visual apenas - Falta coluna no BD) */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Telefone:</label>
             {isEditing ? (
@@ -120,13 +110,14 @@ const Perfil = () => {
                 className={styles.input}
                 value={editData.telefone}
                 onChange={handleInputChange}
+                placeholder="(Apenas visual)"
               />
             ) : (
-              <span className={styles.value}>{profileData.telefone}</span>
+              <span className={styles.value}>{profileData.telefone || '-'}</span>
             )}
           </div>
 
-          {/* Endereço (Editável) */}
+          {/* Endereço (Visual apenas - Falta coluna no BD) */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Endereço:</label>
             {isEditing ? (
@@ -136,27 +127,24 @@ const Perfil = () => {
                 className={styles.input}
                 value={editData.endereco}
                 onChange={handleInputChange}
+                placeholder="(Apenas visual)"
               />
             ) : (
-              <span className={styles.value}>{profileData.endereco}</span>
+              <span className={styles.value}>{profileData.endereco || '-'}</span>
             )}
           </div>
-
         </div>
 
-        {/* Botões de Ação */}
         <div className={styles.actionButtons}>
           {isEditing ? (
             <>
-              <button className={styles.btnPrimary} onClick={handleUpdate}>Atualizar</button>
-              <button className={styles.btnSecondary} onClick={handleClear}>Limpar</button>
+              <button className={styles.btnPrimary} onClick={handleUpdate}>Salvar</button>
               <button className={styles.btnSecondary} onClick={handleCancel}>Cancelar</button>
             </>
           ) : (
             <button className={styles.btnPrimary} onClick={handleEditClick}>Editar Perfil</button>
           )}
         </div>
-
       </div>
     </div>
   );

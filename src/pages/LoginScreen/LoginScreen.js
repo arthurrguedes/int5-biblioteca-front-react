@@ -14,10 +14,10 @@ const LoginScreen = () => {
   const { login } = useAuth(); 
   const navigate = useNavigate(); 
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const isLibrarian = userType === 'bibliotecario';
-    const result = login(email, password, isLibrarian);
+    const result = await login(email, password, isLibrarian);
 
     if (result.success) {
       navigate('/');

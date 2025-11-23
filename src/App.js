@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Header from './components/Header/Header';
 import Home from './pages/Home/Home';
 import LoginScreen from './pages/LoginScreen/LoginScreen';
@@ -18,6 +19,7 @@ import ControleEmprestimos from './pages/ControleEmprestimos/ControleEmprestimos
 import BookDetails from './pages/BookDetails/BookDetails';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import Footer from './components/Footer/Footer';
+
 
 const HEADER_HEIGHT = '50px'; 
 
@@ -103,6 +105,7 @@ function App() {
           />
         </Routes>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
       <Footer />
     </div>
   );

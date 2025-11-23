@@ -1,89 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
-import Button from '../../components/Button/Button';
 import styles from './Reservas.module.css';
-
-const MOCK_BOOKS = [
-  { id: 1, title: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kelly Cesar', year: '2018', edition: '1ª', language: 'Português', pages: 272, status: 'disponivel', queuePosition: null },
-  { id: 2, title: 'O Guia do Mochileiro das Galáxias', author: 'Douglas Adams', year: '2010', edition: '10ª', language: 'Português', pages: 300, status: 'indisponivel', queuePosition: 5 },
-  { id: 3, title: 'A Culpa é das Estrelas', author: 'John Green', year: '2012', edition: '5ª', language: 'Português', pages: 280, status: 'disponivel', queuePosition: null },
-  { id: 4, title: 'Código Limpo', author: 'Robert C. Martin', year: '2009', edition: '1ª', language: 'Português', pages: 464, status: 'disponivel', queuePosition: null },
-  { id: 5, title: 'Use a Cabeça! Java', author: 'Kathy Sierra', year: '2007', edition: '2ª', language: 'Português', pages: 688, status: 'disponivel', queuePosition: null },
-  { id: 6, title: 'O Poder do Hábito', author: 'Charles Duhigg', year: '2012', edition: '3ª', language: 'Português', pages: 400, status: 'reservado', queuePosition: null },
-  { id: 7, title: 'It: A Coisa', author: 'Stephen King', year: '2014', edition: '4ª', language: 'Português', pages: 1138, status: 'indisponivel', queuePosition: 10 },
-  { id: 8, title: 'A Semente do Amanhã', author: 'Roberto C. Martin', year: '2019', edition: '1ª', language: 'Português', pages: 200, status: 'disponivel', queuePosition: null },
-  { id: 9, title: 'Misterio no Expresso Oriente', author: 'Agatha Christie', year: '2020', edition: '1ª', language: 'Português', pages: 350, status: 'disponivel', queuePosition: null },
-  { id: 10, title: 'O Senhor dos Anéis', author: 'J.R.R. Tolkien', year: '2019', edition: '1ª', language: 'Português', pages: 1200, status: 'disponivel', queuePosition: null },
-  { id: 11, title: 'Piquenique na Relva', author: 'Autor Hilario', year: '2018', edition: '2ª', language: 'Português', pages: 150, status: 'disponivel', queuePosition: null },
-  { id: 12, title: 'O Monge e o Executivo', author: 'James C. Hunter', year: '2004', edition: '1ª', language: 'Português', pages: 180, status: 'reservado', queuePosition: null },
-  { id: 13, title: 'O Labirinto do Fauno', author: 'Guillermo del Toro', year: '2019', edition: '1ª', language: 'Português', pages: 250, status: 'disponivel', queuePosition: null },
-  { id: 99, title: 'Café Com Deus Pai Edição 2025', author: 'Júnior Rostirola', year: '2025', edition: '-', language: 'Português', pages: 424, status: 'indisponivel', queuePosition: 2 },
-];
+import { reservasService } from '../../services/reservasService'; // Serviço Correto
+import { toast } from 'react-toastify';
 
 const Reservas = () => {
+  const [reservations, setReservations] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedBook, setSelectedBook] = useState(null);
-  const [quantities, setQuantities] = useState({}); 
 
-  const location = useLocation();
   const navigate = useNavigate();
 
+  // Carrega as reservas reais do Banco de Dados
   useEffect(() => {
-    if (location.state && location.state.selectedBookTitle) {
-      const titleToFind = location.state.selectedBookTitle;
-      const foundBook = MOCK_BOOKS.find(b => 
-        b.title.toLowerCase().trim() === titleToFind.toLowerCase().trim()
-      );
-      if (foundBook) {
-        setSelectedBook(foundBook);
-        setSearchTerm(foundBook.title);
+    const loadData = async () => {
+      setLoading(true);
+      const data = await reservasService.getMyReservations();
+      const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+      setReservations(sortedData);
+      setLoading(false);
+    };
+    loadData();
+  }, []);
+
+  // Lógica de cancelamento real
+  const handleCancel = async (id) => {
+    if (window.confirm('Deseja realmente cancelar esta reserva?')) {
+      const success = await reservasService.cancelReservation(id);
+      if (success) {
+        toast.success('Reserva cancelada com sucesso.');
+        // Atualiza a lista localmente para 'Cancelada' sem precisar recarregar tudo
+        setReservations(prev => prev.map(r => 
+            r.id === id ? { ...r, status: 'Cancelada' } : r
+        ));
+      } else {
+        toast.error('Erro ao cancelar reserva.');
       }
     }
-  }, [location.state]);
+  };
 
-  const filteredBooks = MOCK_BOOKS.filter(book => 
-    book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    book.author.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filtragem local (Busca pelo título do livro)
+  const filteredReservations = reservations.filter(res => 
+    res.bookTitle.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleQuantityChange = (id, delta) => {
-    setQuantities(prev => ({
-      ...prev,
-      [id]: Math.max(1, (prev[id] || 1) + delta)
-    }));
+  // Helpers de Formatação
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit', month: '2-digit', year: 'numeric'
+    });
   };
 
-  const handleSelectBook = (book) => {
-    setSelectedBook(book);
-  };
-
-  const handleConfirmAction = () => {
-    if (!selectedBook) return;
-    if (selectedBook.status === 'disponivel') {
-      alert(`Reserva confirmada para: ${selectedBook.title}`);
-    } else if (selectedBook.status === 'indisponivel') {
-      alert(`Você entrou na fila de espera para: ${selectedBook.title}`);
-    } else if (selectedBook.status === 'reservado') {
-      if (window.confirm('Deseja realmente cancelar esta reserva?')) {
-        alert('Reserva cancelada com sucesso.');
+  const getStatusStyle = (status) => {
+      switch (status) {
+          case 'Ativa': return styles.statusActive;
+          case 'Concluída': return styles.statusCompleted;
+          case 'Cancelada': return styles.statusCancelled;
+          default: return styles.statusActive;
       }
-    }
-  };
-
-  const today = new Date();
-  const nextWeek = new Date(today);
-  nextWeek.setDate(today.getDate() + 7);
-  
-  const formatDate = (date) => {
-    return date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
   const breadcrumbItems = [
     { label: 'Home', path: '/' },
     { label: '(usuário)', path: '#' },
-    { label: 'Reserva', path: '/reservas' }
+    { label: 'Minhas Reservas', path: '/reservas' }
   ];
 
   return (
@@ -91,13 +74,14 @@ const Reservas = () => {
       <Breadcrumb items={breadcrumbItems} />
 
       <div className={styles.contentLayout}>
-        <div className={styles.leftColumn}>
-          <h1 className={styles.pageTitle}>Faça sua reserva</h1>
+        <div className={styles.columnFull}> {/* Usamos coluna cheia para a lista */}
+          <h1 className={styles.pageTitle}>Minhas Reservas</h1>
           
+          {/* Barra de Busca */}
           <div className={styles.searchBar}>
             <input 
               type="text" 
-              placeholder="Digite o nome do livro ou autor" 
+              placeholder="Buscar nas minhas reservas..." 
               className={styles.searchInput}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -105,122 +89,57 @@ const Reservas = () => {
             <FaSearch className={styles.searchIcon} />
           </div>
 
-          <div className={styles.bookList}>
-            {filteredBooks.length > 0 ? (
-              filteredBooks.map(book => (
-                <div 
-                  key={book.id} 
-                  className={`${styles.bookCard} ${selectedBook?.id === book.id ? styles.selected : ''}`}
-                >
-                  <div className={styles.bookInfo}>
-                    <div className={styles.bookCover}></div>
-                    <div className={styles.bookDetails}>
-                      <h3>{book.title}</h3>
-                      <p><strong>Autor(a):</strong> {book.author}</p>
-                      <p><strong>Edição/Ano:</strong> {book.edition} ({book.year})</p>
-                      <p><strong>Idioma:</strong> {book.language}</p>
-                      <p><strong>Páginas:</strong> {book.pages}</p>
-                      
-                      {book.status === 'disponivel' && <p className={`${styles.statusText} ${styles.statusAvailable}`}>Disponível</p>}
-                      {book.status === 'indisponivel' && <p className={`${styles.statusText} ${styles.statusUnavailable}`}>Indisponível</p>}
-                      {book.status === 'reservado' && <p className={`${styles.statusText} ${styles.statusReserved}`}>Reservado por você</p>}
-                    </div>
+          {/* Lista de Reservas */}
+          <div className={styles.reservationList}>
+            {loading ? (
+                <p style={{textAlign: 'center', padding: '20px'}}>Carregando reservas...</p>
+            ) : filteredReservations.length > 0 ? (
+              filteredReservations.map(res => (
+                <div key={res.id} className={styles.reservationCard}>
+                  
+                  <div className={styles.cardHeader}>
+                    <span className={styles.bookTitle}>{res.bookTitle}</span>
+                    <span className={`${styles.statusBadge} ${getStatusStyle(res.status)}`}>
+                      {res.status}
+                    </span>
                   </div>
 
-                  <div className={styles.bookActions}>
-                    <div className={styles.quantityControl}>
-                      <button className={styles.qtyBtn} onClick={() => handleQuantityChange(book.id, -1)}>-</button>
-                      <span className={styles.qtyValue}>{quantities[book.id] || 1}</span>
-                      <button className={styles.qtyBtn} onClick={() => handleQuantityChange(book.id, 1)}>+</button>
+                  <div className={styles.cardBody}>
+                    <div className={styles.infoRow}>
+                        <strong>Data do Pedido:</strong> {formatDate(res.date)}
                     </div>
-
-                    {book.status === 'disponivel' && (
-                      <Button variant="success" onClick={() => handleSelectBook(book)}>
-                        Reservar
-                      </Button>
-                    )}
-
-                    {book.status === 'indisponivel' && (
-                      <Button variant="warning" onClick={() => handleSelectBook(book)}>
-                        Entrar na fila
-                      </Button>
-                    )}
-
-                    {book.status === 'reservado' && (
-                      <Button variant="danger" onClick={() => handleSelectBook(book)}>
-                        Cancelar
-                      </Button>
+                    <div className={styles.infoRow}>
+                        <strong>Prazo para Retirada:</strong> {formatDate(res.deadline)}
+                    </div>
+                    {res.bookEditora && (
+                        <div className={styles.infoRow}>
+                            <strong>Editora:</strong> {res.bookEditora}
+                        </div>
                     )}
                   </div>
+
+                  {/* Botão de Ação apenas se estiver Ativa */}
+                  {res.status === 'Ativa' && (
+                    <div className={styles.cardFooter}>
+                      <button 
+                        className={styles.btnCancel} 
+                        onClick={() => handleCancel(res.id)}
+                      >
+                        Cancelar Reserva
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (
-              <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-                Nenhum livro encontrado.
-              </div>
-            )}
-          </div>
-
-          <div style={{ marginTop: '20px' }}>
-            <Button variant="dark" onClick={() => navigate('/emprestimos')}>
-              Meus Emprestimos
-            </Button>
-          </div>
-        </div>
-
-        <div className={styles.rightColumn}>
-          <div className={styles.sidebarCard}>
-            <div className={styles.orangeHeader}></div>
-            
-            {selectedBook ? (
-              <>
-                <div className={styles.sidebarBookInfo}>
-                  <div className={styles.sidebarCover}></div>
-                  <div className={styles.sidebarText}>
-                    <h4>{selectedBook.title}</h4>
-                    <p>{selectedBook.author}</p>
-                  </div>
-                </div>
-
-                <div className={styles.infoRow}>
-                  <span className={styles.label}>Retirada</span>
-                  <span className={styles.value}>{formatDate(today)}</span>
-                </div>
-                <div className={styles.infoRow}>
-                  <span className={styles.label}>Devolução</span>
-                  <span className={styles.value}>{formatDate(nextWeek)}</span>
-                </div>
-                <div className={styles.infoRow}>
-                  <span className={styles.label}>Fila de Espera</span>
-                  <span className={styles.value}>
-                    {selectedBook.queuePosition 
-                      ? `${selectedBook.queuePosition} na fila` 
-                      : '0 na fila'}
-                  </span>
-                </div>
-
-                <div className={styles.rulesSection}>
-                  <div className={styles.rulesTitle}>Regras para reserva</div>
-                  <div className={styles.rulesText}>
-                    Prazo para retirada: 48 horas<br/>
-                    Limite de reservas por usuario: xx<br/>
-                    Cancelamento automático em caso de não retirada
-                  </div>
-                </div>
-
-                <div style={{ marginTop: '20px' }}>
-                  <Button 
-                    variant={selectedBook.status === 'reservado' ? 'danger' : 'success'} 
-                    fullWidth
-                    onClick={handleConfirmAction}
-                  >
-                    {selectedBook.status === 'reservado' ? 'Confirmar Cancelamento' : 'Confirmar'}
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <div className={styles.noSelection}>
-                Selecione um livro para ver os detalhes.
+              <div className={styles.emptyState}>
+                <p>Você não possui reservas no momento.</p>
+                <button 
+                    className={styles.btnBrowse} 
+                    onClick={() => navigate('/catalogo')}
+                >
+                    Ir para o Catálogo
+                </button>
               </div>
             )}
           </div>

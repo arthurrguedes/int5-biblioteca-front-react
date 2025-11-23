@@ -1,155 +1,156 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './ControleReservas.module.css';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
-import Button from '../../components/Button/Button';
-
-const INITIAL_RESERVATIONS = [
-  { id: 101, user: 'Lorena Oliveira de Souza', bookTitle: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kely César Martins de Paiva', quantity: 1, requestDate: '19/09/2025 - 20:00', classification: '5º', status: 'Aguardando na Fila' },
-  { id: 102, user: 'Lorena Oliveira de Souza', bookTitle: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kely César Martins de Paiva', quantity: 1, requestDate: '19/09/2025 - 20:00', classification: '0º', status: 'Pendente' },
-  { id: 103, user: 'Gabriel Souza', bookTitle: 'Código Limpo', author: 'Robert C. Martin', quantity: 1, requestDate: '20/09/2025 - 10:15', classification: 'X', status: 'Reserva cancelada' },
-  { id: 104, user: 'Lorena Oliveira de Souza', bookTitle: 'O Senhor dos Anéis', author: 'J.R.R. Tolkien', quantity: 1, requestDate: '19/09/2025 - 20:00', classification: '5º', status: 'Aguardando na Fila' },
-  { id: 105, user: 'Lorena Oliveira de Souza', bookTitle: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kely César Martins de Paiva', quantity: 1, requestDate: '19/09/2025 - 20:00', classification: '0º', status: 'Pendente' },
-  { id: 106, user: 'Lorena Oliveira de Souza', bookTitle: 'Gestão de recursos humanos: teorias e reflexões', author: 'Kely César Martins de Paiva', quantity: 1, requestDate: '19/09/2025 - 20:00', classification: 'X', status: 'Reserva cancelada' }
-];
+import { reservasService } from '../../services/reservasService';
+import { toast } from 'react-toastify';
 
 const ControleReservas = () => {
-  const [reservations, setReservations] = useState(INITIAL_RESERVATIONS);
-  const [selectedId, setSelectedId] = useState(null);
+  const [reservations, setReservations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('Todas');
 
-  const selectedReservation = reservations.find(r => r.id === selectedId);
+  useEffect(() => {
+    const loadAll = async () => {
+        setLoading(true);
+        try {
+            const data = await reservasService.getAllReservations();
+            if (Array.isArray(data)) {
+                setReservations(data);
+            } else {
+                setReservations([]);
+            }
+        } catch (error) {
+            console.error("Erro:", error);
+            toast.error("Erro ao carregar reservas.");
+        } finally {
+            setLoading(false);
+        }
+    };
+    loadAll();
+  }, []);
 
-  const handleAuthorize = () => {
-    if (!selectedId) return;
-    setReservations(prev => prev.map(item => {
-      if (item.id === selectedId) return { ...item, status: 'Aprovada', classification: '-' };
-      return item;
-    }));
-    alert('Reserva autorizada com sucesso!');
+  // --- LÓGICA DE CANCELAMENTO (A única ação necessária) ---
+  const handleCancel = async (id) => {
+      if (!window.confirm("Tem certeza que deseja cancelar esta reserva?")) return;
+
+      const success = await reservasService.cancelReservation(id);
+      
+      if (success) {
+          toast.success("Reserva cancelada com sucesso.");
+          // Atualiza a lista visualmente para 'Cancelada'
+          setReservations(prev => prev.map(r => 
+              r.id === id ? { ...r, status: 'Cancelada' } : r
+          ));
+      } else {
+          toast.error("Erro ao cancelar reserva.");
+      }
   };
 
-  const handleCancel = () => {
-    if (!selectedId) return;
-    setReservations(prev => prev.map(item => {
-      if (item.id === selectedId) return { ...item, status: 'Reserva cancelada', classification: 'X' };
-      return item;
-    }));
-    alert('Reserva cancelada.');
+  const filteredReservations = reservations.filter(r => 
+      filter === 'Todas' ? true : r.status === filter
+  );
+
+  const formatDateShort = (d) => {
+      if (!d) return '-';
+      const date = new Date(d);
+      return date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).replace('.', '');
   };
 
   const getStatusClass = (status) => {
-    switch (status) {
-      case 'Pendente': return styles.statusPending;
-      case 'Aguardando na Fila': return styles.statusQueue;
-      case 'Reserva cancelada': return styles.statusCancelled;
-      case 'Aprovada': return styles.statusApproved;
-      default: return '';
-    }
+      switch (status) {
+          case 'Ativa': return styles.statusAtiva;
+          case 'Concluída': return styles.statusConcluida; // Mantive caso existam legados
+          case 'Cancelada': return styles.statusCancelada;
+          case 'Expirada': return styles.statusExpirada;
+          default: return styles.statusAtiva;
+      }
   };
 
   const breadcrumbItems = [
     { label: 'Home', path: '/' },
-    { label: '(administrador)', path: '#' },
-    { label: 'Controle de Reserva', path: '/controle-reservas' }
+    { label: 'Admin', path: '#' },
+    { label: 'Controle', path: '/controle-reservas' }
   ];
 
   return (
     <div className={styles.container}>
       <Breadcrumb items={breadcrumbItems} />
-      <h1 className={styles.pageTitle}>Controle de Reservas</h1>
+      
+      <div className={styles.headerRow}>
+        <h1 className={styles.title}>Controle de Reservas</h1>
+        <select 
+            className={styles.filterSelect} 
+            value={filter} 
+            onChange={(e) => setFilter(e.target.value)}
+        >
+            <option value="Todas">Todas as Reservas</option>
+            <option value="Ativa">Ativas</option>
+            <option value="Cancelada">Canceladas</option>
+            <option value="Expirada">Expiradas</option>
+            <option value="Concluídas">Concluídas</option>
+        </select>
+      </div>
 
-      <div className={styles.contentLayout}>
-        <div className={styles.leftColumn}>
-          <div className={styles.tableHeader}>
-            <div>Usuário</div>
-            <div>Livro</div>
-            <div>Autor (a)</div>
-            <div>Qtd</div>
-            <div>Data da Solicitação</div>
-            <div>Classif.</div>
-            <div style={{textAlign: 'right'}}>Situação</div>
-          </div>
+      <div className={styles.tableContainer}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Livro</th>
+              <th>Usuário</th>
+              <th>Data / Prazo</th>
+              <th>Status</th>
+              <th style={{textAlign: 'right'}}>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+                <tr><td colSpan="5" style={{textAlign: 'center', padding: '30px'}}>Carregando...</td></tr>
+            ) : filteredReservations.length > 0 ? (
+                filteredReservations.map(res => (
+                <tr key={res.id}>
+                    <td data-label="Livro">
+                        <span className={styles.bookTitle}>{res.bookTitle}</span>
+                        <span className={styles.bookAuthor}>ID: #{res.id}</span>
+                    </td>
 
-          <div className={styles.listContainer}>
-            {reservations.map(res => (
-              <div 
-                key={res.id} 
-                className={`${styles.reservationCard} ${selectedId === res.id ? styles.selected : ''}`}
-                onClick={() => setSelectedId(res.id)}
-              >
-                <div title={res.user} className={styles.bookTitle}>{res.user.split(' ')[0]}...</div>
-                <div className={styles.bookTitle} title={res.bookTitle}>{res.bookTitle}</div>
-                <div title={res.author}>{res.author.split(' ')[0]}...</div>
-                <div style={{textAlign: 'center'}}>{res.quantity}</div>
-                <div>{res.requestDate}</div>
-                <div style={{textAlign: 'center'}}>{res.classification}</div>
-                <div className={`${styles.statusText} ${getStatusClass(res.status)}`}>
-                  {res.status}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+                    <td data-label="Usuário">
+                        <span className={styles.userInfo}>{res.userName}</span>
+                    </td>
 
-        <div className={styles.rightColumn}>
-          <h3 className={styles.sidebarTitle}>Aprovação da reserva</h3>
-          
-          {selectedReservation ? (
-            <div className={styles.approvalCard}>
-              <div className={styles.cardHeader}>Aprovação da Reserva</div>
-              
-              <div className={styles.cardContent}>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Usuario</span>
-                  <span className={styles.value}>{selectedReservation.user}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Livro</span>
-                  <span className={styles.value}>{selectedReservation.bookTitle}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Quantidade</span>
-                  <span className={styles.value}>{selectedReservation.quantity}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Classificação</span>
-                  <span className={styles.value}>
-                    {selectedReservation.classification === 'X' ? '-' : `${selectedReservation.classification} na fila`}
-                  </span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Situação</span>
-                  <span className={`${styles.value} ${getStatusClass(selectedReservation.status)}`}>
-                    {selectedReservation.status}
-                  </span>
-                </div>
-              </div>
+                    <td data-label="Data">
+                        <span className={styles.dateInfo}>
+                            {formatDateShort(res.date)} - {formatDateShort(res.deadline)}
+                        </span>
+                    </td>
 
-              <div className={styles.actions}>
-                <Button 
-                  variant="success" 
-                  size="small"
-                  onClick={handleAuthorize}
-                  disabled={selectedReservation.status === 'Reserva cancelada' || selectedReservation.status === 'Aprovada'}
-                >
-                  Autorizar
-                </Button>
-                
-                <Button 
-                  variant="danger"
-                  size="small" 
-                  onClick={handleCancel}
-                  disabled={selectedReservation.status === 'Reserva cancelada' || selectedReservation.status === 'Aprovada'}
-                >
-                  Cancelar
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className={styles.noSelection}>
-              Selecione uma reserva na lista para visualizar os detalhes e realizar ações.
-            </div>
-          )}
-        </div>
+                    <td data-label="Status">
+                        <span className={`${styles.statusBadge} ${getStatusClass(res.status)}`}>
+                            <span className={styles.statusDot}></span>
+                            {res.status}
+                        </span>
+                    </td>
+
+                    <td data-label="Ações" style={{textAlign: 'right'}}>
+                    {/* Apenas mostramos o botão se a reserva estiver ativa */}
+                    {res.status === 'Ativa' ? (
+                        <button 
+                          className={styles.btnCancel}
+                          onClick={() => handleCancel(res.id)}>Cancelar</button>
+                    ) : (
+                        <span style={{color: '#ccc', fontSize: '0.8rem'}}>--</span>
+                    )}
+                    </td>
+                </tr>
+                ))
+            ) : (
+                <tr>
+                    <td colSpan="5" style={{textAlign: 'center', padding: '40px', color: '#8898aa'}}>
+                        Nenhuma reserva encontrada.
+                    </td>
+                </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

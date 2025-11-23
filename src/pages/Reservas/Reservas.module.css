@@ -253,3 +253,39 @@
     padding: 40px 0;
     font-style: italic;
 }
+
+.reservationCard {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.statusBadge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+.statusActive { background: #e3f2fd; color: #1565c0; }
+.statusCompleted { background: #e8f5e9; color: #2e7d32; }
+.statusCancelled { background: #ffebee; color: #c62828; }
+.btnCancel {
+    background: #fff;
+    border: 1px solid #d32f2f;
+    color: #d32f2f;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btnCancel:hover {
+    background: #d32f2f;
+    color: white;
+}

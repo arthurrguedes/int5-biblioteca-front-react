@@ -3,6 +3,8 @@ import styles from './ControleReservas.module.css';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import { reservasService } from '../../services/reservasService';
 import { toast } from 'react-toastify';
+import { emprestimosService } from '../../services/emprestimosService';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 
 const ControleReservas = () => {
   const [reservations, setReservations] = useState([]);
@@ -28,6 +30,23 @@ const ControleReservas = () => {
     };
     loadAll();
   }, []);
+
+  const handleApprove = async (idReserva) => {
+      if (!window.confirm("Confirmar retirada do livro? Isso gerará um empréstimo.")) return;
+
+      // Chama o serviço de Empréstimos, não de Reservas
+      const result = await emprestimosService.createEmprestimo(idReserva);
+
+      if (result.success) {
+          toast.success(result.message);
+          // Atualiza visualmente para Concluída
+          setReservations(prev => prev.map(r => 
+              r.id === idReserva ? { ...r, status: 'Concluída' } : r
+          ));
+      } else {
+          toast.error(result.message);
+      }
+  };
 
   // --- LÓGICA DE CANCELAMENTO (A única ação necessária) ---
   const handleCancel = async (id) => {
@@ -133,9 +152,22 @@ const ControleReservas = () => {
                     <td data-label="Ações" style={{textAlign: 'right'}}>
                     {/* Apenas mostramos o botão se a reserva estiver ativa */}
                     {res.status === 'Ativa' ? (
+                      <div style={{display: 'flex', gap: '10px', justifyContent: 'flex-end'}}>
+                            <button 
+                            className={`${styles.actionBtn} ${styles.btnCheck}`} 
+                            onClick={() => handleApprove(res.id)} 
+                            title="Gerar Empréstimo"
+                        >
+                            <FaCheck />
+                        </button>
                         <button 
-                          className={styles.btnCancel}
-                          onClick={() => handleCancel(res.id)}>Cancelar</button>
+                            className={`${styles.actionBtn} ${styles.btnCancel}`} 
+                            onClick={() => handleCancel(res.id)} 
+                            title="Cancelar"
+                        >
+                            <FaTimes />
+                        </button>
+                          </div>
                     ) : (
                         <span style={{color: '#ccc', fontSize: '0.8rem'}}>--</span>
                     )}

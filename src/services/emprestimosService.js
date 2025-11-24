@@ -1,4 +1,4 @@
-// URL do Gateway
+// URL do API Gateway
 const API_URL = 'http://localhost:3001/emprestimos'; 
 
 const getAuthHeaders = () => {
@@ -10,8 +10,7 @@ const getAuthHeaders = () => {
 };
 
 export const emprestimosService = {
-    
-    // 1. Criar Empréstimo (Admin transforma Reserva em Empréstimo)
+    // Admin: Cria empréstimo a partir de uma reserva
     createEmprestimo: async (idReserva) => {
         try {
             const response = await fetch(API_URL, {
@@ -20,19 +19,14 @@ export const emprestimosService = {
                 body: JSON.stringify({ idReserva })
             });
             const data = await response.json();
-            
-            if (response.status === 201) {
-                return { success: true, message: data.message };
-            } else {
-                return { success: false, message: data.message || 'Erro ao criar empréstimo.' };
-            }
+            if (response.ok) return { success: true, message: data.message };
+            return { success: false, message: data.message || 'Erro ao criar.' };
         } catch (error) {
-            console.error("Erro:", error);
             return { success: false, message: 'Erro de conexão.' };
         }
     },
 
-    // 2. Meus Empréstimos (Usuário)
+    // Usuário: Meus Empréstimos
     getMyEmprestimos: async () => {
         try {
             const response = await fetch(`${API_URL}/meus`, {
@@ -40,58 +34,39 @@ export const emprestimosService = {
                 headers: getAuthHeaders()
             });
             if (!response.ok) return [];
-            const data = await response.json();
-            
-            // Mapeamento
-            return data.map(e => ({
-                id: e.idEmprestimo,
-                bookTitle: e.titulo,
-                bookEditora: e.editora,
-                dateStart: e.dataEmprestimo,
-                dateDue: e.dataDevolucaoPrevista,
-                status: e.statusEmprestimo
-            }));
+            return await response.json();
         } catch (error) {
+            console.error("Erro service:", error);
             return [];
         }
     },
 
-    // 3. Todos os Empréstimos (Admin)
+    // Admin: Todos os Empréstimos
     getAllEmprestimos: async () => {
         try {
             const response = await fetch(API_URL, { 
                 method: 'GET',
                 headers: getAuthHeaders()
             });
-
-            if (!response.ok) throw new Error('Falha ao buscar empréstimos');
-            const data = await response.json();
-
-            return data.map(e => ({
-                id: e.idEmprestimo,
-                bookTitle: e.titulo,
-                userName: e.usuario_info, // Placeholder ou nome real se o back trouxer
-                dateStart: e.dataEmprestimo,
-                dateDue: e.dataDevolucaoPrevista,
-                dateReturn: e.dataDevolucaoReal,
-                status: e.statusEmprestimo
-            }));
+            if (!response.ok) return [];
+            return await response.json();
         } catch (error) {
-            console.error("Erro no service:", error);
             return [];
         }
     },
 
-    // 4. Devolver Livro (Admin)
+    // Admin: Devolver Livro
     returnBook: async (id) => {
         try {
             const response = await fetch(`${API_URL}/${id}/devolver`, {
                 method: 'PUT',
                 headers: getAuthHeaders()
             });
-            return response.ok;
+            const data = await response.json();
+            if (response.ok) return { success: true, message: data.message, multa: data.multa };
+            return { success: false, message: data.message };
         } catch (error) {
-            return false;
+            return { success: false, message: 'Erro de conexão.' };
         }
     }
 };

@@ -1,141 +1,175 @@
+/* --- Layout Principal --- */
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 20px 40px;
     background-color: #f0f0f0;
     min-height: 80vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.pageTitle {
-    color: #333;
+/* --- Cabeçalho e Busca --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 30px;
+}
+
+.header h1 {
+    color: #333;
     font-size: 28px;
     font-weight: bold;
+    margin: 0;
 }
 
-/* --- Filtros --- */
-.filtersBar {
+.searchBox {
     display: flex;
-    gap: 30px;
-    margin-bottom: 30px;
-    align-items: flex-end;
-}
-
-.filterGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-}
-
-/* Estilo dos Selects e Inputs para ficarem iguais à imagem */
-.selectInput, .textInput {
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px; /* Levemente arredondado */
+    align-items: center;
     background-color: white;
-    font-size: 14px;
-    color: #555;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 12px;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.searchBox input {
+    border: none;
     outline: none;
+    font-size: 14px;
+    width: 300px;
+    color: #555;
 }
 
-.selectInput {
-    min-width: 150px;
-    cursor: pointer;
-}
-
-.textInput {
-    min-width: 300px;
+.searchBox svg {
+    color: #666;
 }
 
 /* --- Tabela --- */
 .tableContainer {
     background-color: white;
     border-radius: 4px;
-    overflow: hidden;
+    overflow: hidden; /* Arredonda os cantos da tabela */
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-/* Grid Layout para alinhar colunas */
-.gridHeader, .gridRow {
-    display: grid;
-    /* Definição das colunas: # | Usuário | Título | Autor | Ano | Início | Término | Devolução | Status | Ações */
-    grid-template-columns: 0.5fr 2fr 2.5fr 2fr 0.8fr 1.2fr 1.2fr 1.2fr 1.2fr 1.5fr;
-    padding: 12px 15px;
-    align-items: center;
-    font-size: 13px;
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
-.gridHeader {
-    background-color: #3d3d5c; /* Roxo escuro/azulado da imagem */
+.table th {
+    background-color: #3d3d5c; /* Seu roxo escuro */
     color: white;
     font-weight: bold;
     text-transform: uppercase;
     font-size: 12px;
+    padding: 15px;
+    text-align: left;
+    letter-spacing: 0.5px;
 }
 
-.gridRow {
-    border-bottom: 1px solid #eee;
+.table td {
+    padding: 12px 15px;
+    font-size: 13px;
     color: #333;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
 }
 
-/* Efeito zebrado (Striped) igual à imagem */
-.gridRow:nth-child(even) {
-    background-color: #e0e0e0; /* Cinza da imagem */
+/* Efeito Zebrado (Striped) */
+.table tbody tr:nth-child(even) {
+    background-color: #e0e0e0; /* Seu cinza */
 }
 
-.gridRow:nth-child(odd) {
+.table tbody tr:nth-child(odd) {
     background-color: white;
 }
 
-.gridRow:hover {
-    background-color: #f0f8ff; /* Destaque ao passar o mouse */
-}
-
-/* Status Badges */
-.statusBadge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-weight: bold;
-    font-size: 11px;
-    text-align: center;
-    width: fit-content;
-}
-
-.statusVigente { background-color: #e8f5e9; color: #2e7d32; }
-.statusAtrasado { background-color: #ffebee; color: #c62828; }
-.statusDevolvido { background-color: #e0e0e0; color: #616161; }
-
-/* Botões de Ação */
-.actionButtons {
-    display: flex;
-    gap: 5px;
-}
-
-.btnIcon {
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 5px;
-    border-radius: 4px;
+/* Hover na linha */
+.table tbody tr:hover {
+    background-color: #f0f8ff; /* Azul claro ao passar o mouse */
     transition: background-color 0.2s;
 }
 
-.btnCheck { color: #4caf50; } /* Devolver */
-.btnCheck:hover { background-color: #e8f5e9; }
-
-.btnRenew { color: #2196f3; } /* Renovar */
-.btnRenew:hover { background-color: #e3f2fd; }
-
-.noResults {
-    padding: 40px;
+/* --- Badges de Status --- */
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 11px;
+    text-transform: uppercase;
+    display: inline-block;
+    min-width: 80px;
     text-align: center;
-    color: #999;
-    font-style: italic;
+}
+
+/* Status: Ativo/Vigente */
+.active {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+/* Status: Devolvido/Concluído */
+.done {
+    background-color: #e0e0e0;
+    color: #616161;
+    border: 1px solid #bdbdbd;
+}
+
+/* Status: Atrasado (aplicado dinamicamente via style inline no JS, mas bom ter aqui) */
+.overdue {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+/* --- Botões --- */
+.btnReturn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: transparent;
+    border: 1px solid #4caf50;
+    color: #4caf50;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btnReturn:hover {
+    background-color: #4caf50;
+    color: white;
+    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+}
+
+.btnReturn svg {
+    font-size: 14px;
+}
+
+/* Responsividade para Telas Pequenas */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .searchBox input {
+        width: 100%;
+    }
+
+    .tableContainer {
+        overflow-x: auto; /* Permite scroll horizontal na tabela */
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
 }

@@ -1,95 +1,128 @@
 import React, { useState, useEffect } from 'react';
-import styles from './ControleEmprestimos.module.css'; // Pode usar o mesmo CSS de Reservas se quiser manter o padrão
+import styles from './ControleEmprestimos.module.css';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import { emprestimosService } from '../../services/emprestimosService';
 import { toast } from 'react-toastify';
+import { FaUndo, FaSearch } from 'react-icons/fa';
 
 const ControleEmprestimos = () => {
-  const [loans, setLoans] = useState([]);
-  const [loading, setLoading] = useState(true);
+    const [loans, setLoans] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
-  // Carrega todos os empréstimos
-  useEffect(() => {
-    const loadAll = async () => {
+    const loadLoans = async () => {
         setLoading(true);
-        try {
-            const data = await emprestimosService.getAllLoans();
-            setLoans(data);
-        } catch (error) {
-            toast.error("Erro ao carregar empréstimos.");
-        } finally {
-            setLoading(false);
+        const data = await emprestimosService.getAllEmprestimos();
+        // O service já retorna o array pronto do backend
+        setLoans(Array.isArray(data) ? data : []);
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        loadLoans();
+    }, []);
+
+    const handleReturn = async (id) => {
+        if (!window.confirm("Confirmar a devolução deste livro?")) return;
+
+        const result = await emprestimosService.returnBook(id);
+        if (result.success) {
+            let msg = result.message;
+            if (result.multa > 0) msg += ` (Multa: R$ ${result.multa})`;
+            toast.success(msg);
+            loadLoans(); // Recarrega para atualizar status
+        } else {
+            toast.error(result.message);
         }
     };
-    loadAll();
-  }, []);
 
-  // Devolver Livro
-  const handleReturn = async (id) => {
-      if (!window.confirm("Confirmar devolução do livro?")) return;
-      
-      const success = await emprestimosService.returnBook(id);
-      if (success) {
-          toast.success("Livro devolvido com sucesso!");
-          setLoans(prev => prev.map(l => 
-              l.id === id ? { ...l, status: 'Concluído' } : l
-          ));
-      } else {
-          toast.error("Erro ao devolver.");
-      }
-  };
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '-';
+        return new Date(dateStr).toLocaleDateString('pt-BR');
+    };
 
-  const formatDate = (d) => d ? new Date(d).toLocaleDateString('pt-BR') : '-';
+    const filteredLoans = loans.filter(l => 
+        l.titulo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        l.usuario_info?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-  return (
-    <div className={styles.container}>
-      <Breadcrumb items={[{ label: 'Admin', path: '#' }, { label: 'Empréstimos', path: '/controle-emprestimos' }]} />
-      <h1 className={styles.title}>Controle de Empréstimos</h1>
+    const breadcrumbItems = [
+        { label: 'Admin', path: '#' },
+        { label: 'Controle de Empréstimos', path: '/controle-emprestimos' }
+    ];
 
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Livro</th>
-              <th>Usuário</th>
-              <th>Retirada</th>
-              <th>Devolução Prevista</th>
-              <th>Status</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? <tr><td colSpan="7">Carregando...</td></tr> : loans.map(loan => (
-              <tr key={loan.id}>
-                <td>#{loan.id}</td>
-                <td><span className={styles.bookTitle}>{loan.bookTitle}</span></td>
-                <td>{loan.userName}</td>
-                <td>{formatDate(loan.dateStart)}</td>
-                <td>{formatDate(loan.dateDue)}</td>
-                <td>
-                    <span style={{color: loan.status === 'Vigente' ? '#007bff' : '#28a745', fontWeight: 'bold'}}>
-                        {loan.status}
-                    </span>
-                </td>
-                <td>
-                  {loan.status === 'Vigente' && (
-                    <button 
-                        onClick={() => handleReturn(loan.id)} 
-                        className={styles.btnCheck} // Reutilize estilos de botão
-                        style={{cursor: 'pointer', border: '1px solid #00c07f', background: 'white', color: '#00c07f', padding: '5px 10px', borderRadius: '5px'}}
-                    >
-                        Devolver
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+    return (
+        <div className={styles.container}>
+            <Breadcrumb items={breadcrumbItems} />
+            
+            <div className={styles.header}>
+                <h1>Controle de Empréstimos</h1>
+                <div className={styles.searchBox}>
+                    <FaSearch />
+                    <input 
+                        type="text" 
+                        placeholder="Buscar por livro ou usuário..." 
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+            </div>
+
+            <div className={styles.tableContainer}>
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Livro</th>
+                            <th>Usuário</th>
+                            <th>Retirada</th>
+                            <th>Prevista</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {loading ? (
+                            <tr><td colSpan="7" style={{textAlign:'center'}}>Carregando...</td></tr>
+                        ) : filteredLoans.length > 0 ? (
+                            filteredLoans.map(loan => (
+                                <tr key={loan.idEmprestimo}>
+                                    <td>#{loan.idEmprestimo}</td>
+                                    <td>{loan.titulo}</td>
+                                    <td>{loan.usuario_info}</td>
+                                    <td>{formatDate(loan.dataEmprestimo)}</td>
+                                    <td style={{
+                                        color: (new Date() > new Date(loan.dataDevolucaoPrevista) && loan.statusEmprestimo === 'Ativo') ? 'red' : 'inherit',
+                                        fontWeight: (new Date() > new Date(loan.dataDevolucaoPrevista) && loan.statusEmprestimo === 'Ativo') ? 'bold' : 'normal'
+                                    }}>
+                                        {formatDate(loan.dataDevolucaoPrevista)}
+                                    </td>
+                                    <td>
+                                        <span className={`${styles.badge} ${loan.statusEmprestimo === 'Ativo' ? styles.active : styles.done}`}>
+                                            {loan.statusEmprestimo}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {loan.statusEmprestimo === 'Ativo' && (
+                                            <button 
+                                                className={styles.btnReturn}
+                                                onClick={() => handleReturn(loan.idEmprestimo)}
+                                                title="Registrar Devolução"
+                                            >
+                                                <FaUndo /> Devolver
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr><td colSpan="7" style={{textAlign:'center'}}>Nenhum registro encontrado.</td></tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
 };
 
 export default ControleEmprestimos;

@@ -1,9 +1,8 @@
-import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import React, { createContext, useState, useContext, useCallback } from 'react';
 
 const AuthContext = createContext(null);
 
-// URL do API Gateway
+// URL do API Gateway (ou direto para o backend se não houver gateway)
 const API_URL = 'http://localhost:3001';
 
 const STORAGE_KEY_USER = '@BibliotecaPlus:user';
@@ -22,25 +21,16 @@ export const AuthProvider = ({ children }) => {
   // --- LOGIN ---
   const login = useCallback(async (identifier, password, isLibrarian) => {
     try {
-      // Define o endpoint baseado no tipo de usuário
-      // Se for bibliotecário, chama /bibliotecarios/login, senão /users/login
       const endpoint = isLibrarian ? '/bibliotecarios/login' : '/users/login';
       
-      // O back-end espera { email, senha } para usuário ou { login, senha } para bibliotecário
       const body = isLibrarian 
-        ? { login: identifier,yb: password } // Ajuste se o back esperar senha
+        ? { login: identifier, senha: password } 
         : { email: identifier, senha: password };
-
-        // Users: { email, senha }
-        // Bibliotecarios: { login, senha }
 
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            [isLibrarian ? 'login' : 'email']: identifier,
-            senha: password 
-        })
+        body: JSON.stringify(body)
       });
 
       const data = await response.json();
@@ -50,18 +40,19 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Padronizando o objeto user para o front-end
-      // O Front usa username, o banco devolve nome
       const userData = {
         id: data.user.id,
         username: data.user.nome, 
-        email: data.user.email || null, // Bibliotecário não tem email no retorno atual
+        email: data.user.email || null,
+        telefone: data.user.telefone || '',
+        endereco: data.user.endereco || '',
         role: data.user.role || (isLibrarian ? 'admin' : 'usuario')
       };
 
       const realToken = data.token;
 
       setUser(userData);
-      setToken('token-dummy-jwt'); // Futuramente seu back retornará um token real aqui
+      setToken(realToken);
       
       localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
       localStorage.setItem(STORAGE_KEY_TOKEN, realToken);
@@ -74,8 +65,8 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // --- CADASTRO (Apenas Usuários Comuns) ---
-  const register = useCallback(async (nome, email, password, dataNascimento) => {
+  // --- CADASTRO ---
+  const register = useCallback(async (nome, email, password, dataNascimento, telefone, endereco) => {
     try {
       const response = await fetch(`${API_URL}/users/register`, {
         method: 'POST',
@@ -84,7 +75,9 @@ export const AuthProvider = ({ children }) => {
           nome,
           email,
           senha: password,
-          dataNascimento // Formato esperado: YYYY-MM-DD
+          dataNascimento,
+          telefone,
+          endereco
         })
       });
 
@@ -100,16 +93,16 @@ export const AuthProvider = ({ children }) => {
       console.error("Erro no cadastro:", error);
       return { success: false, message: 'Erro de conexão ao tentar cadastrar.' };
     }
-  }, [login]); // Dependência do login ao usar auto-login
+  }, []);
 
-    const logout = useCallback(() => {
+  const logout = useCallback(() => {
     setUser(null);
     setToken(null);
     localStorage.removeItem(STORAGE_KEY_USER);
     localStorage.removeItem(STORAGE_KEY_TOKEN);
   }, []);
 
-  // UPDATE
+  // --- UPDATE PROFILE ---
   const updateProfile = useCallback(async (dados) => {
     if (!user?.id) {
         return { success: false, message: "Usuário não identificado." };
@@ -117,7 +110,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const headers = {
-        'Authorization': `Bearer ${token}` // Envia o token salvo no contexto
+        'Authorization': `Bearer ${token}`
       };
 
       let body;
@@ -144,11 +137,14 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: data.message || 'Erro ao atualizar' };
       }
 
+      // Atualiza o estado local com os dados retornados do backend
       const userAtualizado = { 
         ...user, 
-        username: data.user.nome,
-        email: data.user.email,
-        foto: data.user.foto
+        username: data.user.nome || user.username,
+        email: data.user.email || user.email,
+        telefone: data.user.telefone || user.telefone,
+        endereco: data.user.endereco || user.endereco,
+        foto: data.user.foto || user.foto
       };
 
       setUser(userAtualizado);

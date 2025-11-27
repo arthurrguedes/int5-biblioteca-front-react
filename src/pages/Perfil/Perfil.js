@@ -14,26 +14,76 @@ const Perfil = () => {
   const [profileData, setProfileData] = useState({
     nome: user?.username || 'Usuário',
     email: user?.email || '', 
-    nascimento: 'Data não cadastrada', 
-    telefone: '', 
-    endereco: '' 
+    telefone: user?.telefone || '', 
+    endereco: user?.endereco || '' 
   });
 
   useEffect(() => {
     if (user) {
-      setProfileData(prev => ({
-        ...prev,
+      setProfileData({
         nome: user.username,
-        email: user.email || ''
-      }));
+        email: user.email || '',
+        telefone: user.telefone || '',
+        endereco: user.endereco || ''
+      });
     }
   }, [user]);
 
   const [editData, setEditData] = useState(profileData);
 
+  // --- MÁSCARA DE TELEFONE ---
+  const formatPhoneNumber = (value) => {
+    if (!value) return value;
+    // Remove tudo que não é dígito
+    const phoneNumber = value.replace(/[^\d]/g, '');
+    const phoneNumberLength = phoneNumber.length;
+
+    if (phoneNumberLength < 4) return phoneNumber;
+    if (phoneNumberLength < 7) {
+      return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2)}`;
+    }
+    if (phoneNumberLength <= 10) {
+        return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 6)}-${phoneNumber.slice(6)}`;
+    }
+    // Formato para 9 dígitos (celular)
+    return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 7)}-${phoneNumber.slice(7, 11)}`;
+  };
+
+  // --- VALIDAÇÃO ---
+  const validateForm = () => {
+    // 1. Validação de Email (Regex Simples)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(editData.email)) {
+        toast.error("Por favor, insira um e-mail válido.");
+        return false;
+    }
+
+    // 2. Validação de Telefone (Mínimo 10 dígitos: DDD + 8 números)
+    const rawPhone = editData.telefone.replace(/[^\d]/g, '');
+    if (rawPhone.length < 10 || rawPhone.length > 11) {
+        toast.error("Por favor, insira um telefone válido com DDD (ex: (21) 99999-9999).");
+        return false;
+    }
+
+    // 3. Validação de Endereço (Mínimo 5 caracteres para considerar válido)
+    if (!editData.endereco || editData.endereco.trim().length < 5) {
+        toast.error("Por favor, insira um endereço completo.");
+        return false;
+    }
+
+    return true;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditData(prev => ({ ...prev, [name]: value }));
+    let finalValue = value;
+
+    // Se for telefone, aplica a máscara
+    if (name === 'telefone') {
+        finalValue = formatPhoneNumber(value);
+    }
+
+    setEditData(prev => ({ ...prev, [name]: finalValue }));
   };
 
   const handleEditClick = () => {
@@ -47,8 +97,15 @@ const Perfil = () => {
   };
 
   const handleUpdate = async () => {
+    // Chama a validação antes de enviar
+    if (!validateForm()) {
+        return;
+    }
+
     const result = await updateProfile({
-        email: editData.email
+        email: editData.email,
+        telefone: editData.telefone,
+        endereco: editData.endereco
     });
 
     if (result.success) {
@@ -78,13 +135,13 @@ const Perfil = () => {
         </div>
 
         <div className={styles.infoList}>
-          {/* Nome (Apenas leitura por enquanto) */}
+          {/* Nome (Apenas leitura) */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Nome Completo:</label>
             <span className={styles.value}>{profileData.nome}</span>
           </div>
 
-          {/* Email (Editável e Salva no Banco) */}
+          {/* Email */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Email:</label>
             {isEditing ? (
@@ -94,13 +151,14 @@ const Perfil = () => {
                 className={styles.input}
                 value={editData.email}
                 onChange={handleInputChange}
+                placeholder="exemplo@email.com"
               />
             ) : (
               <span className={styles.value}>{profileData.email}</span>
             )}
           </div>
 
-          {/* Telefone (Visual apenas - Falta coluna no BD) */}
+          {/* Telefone */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Telefone:</label>
             {isEditing ? (
@@ -110,14 +168,15 @@ const Perfil = () => {
                 className={styles.input}
                 value={editData.telefone}
                 onChange={handleInputChange}
-                placeholder="(Apenas visual)"
+                placeholder="(XX) XXXXX-XXXX"
+                maxLength="15" // Limita o tamanho visual da máscara
               />
             ) : (
               <span className={styles.value}>{profileData.telefone || '-'}</span>
             )}
           </div>
 
-          {/* Endereço (Visual apenas - Falta coluna no BD) */}
+          {/* Endereço */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Endereço:</label>
             {isEditing ? (
@@ -127,7 +186,7 @@ const Perfil = () => {
                 className={styles.input}
                 value={editData.endereco}
                 onChange={handleInputChange}
-                placeholder="(Apenas visual)"
+                placeholder="Rua, Número, Complemento"
               />
             ) : (
               <span className={styles.value}>{profileData.endereco || '-'}</span>

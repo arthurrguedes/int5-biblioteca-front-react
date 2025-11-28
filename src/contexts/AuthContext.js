@@ -1,9 +1,8 @@
-import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import React, { createContext, useState, useContext, useCallback } from 'react';
 
 const AuthContext = createContext(null);
 
-// URL do API Gateway
+// URL do API Gateway (ou direto para o backend se não houver gateway)
 const API_URL = 'http://localhost:3001';
 
 const STORAGE_KEY_USER = '@BibliotecaPlus:user';
@@ -25,21 +24,14 @@ export const AuthProvider = ({ children }) => {
       // Se for bibliotecário, chama /bibliotecarios/login, senão /users/login
       const endpoint = isLibrarian ? '/bibliotecarios/login' : '/users/login';
       
-      // O back-end espera { email, senha } para usuário ou { login, senha } para bibliotecário
       const body = isLibrarian 
         ? { login: identifier,yb: password }
         : { email: identifier, senha: password };
 
-        // Users: { email, senha }
-        // Bibliotecarios: { login, senha }
-
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            [isLibrarian ? 'login' : 'email']: identifier,
-            senha: password 
-        })
+        body: JSON.stringify(body)
       });
 
       const data = await response.json();
@@ -98,9 +90,9 @@ export const AuthProvider = ({ children }) => {
       console.error("Erro no cadastro:", error);
       return { success: false, message: 'Erro de conexão ao tentar cadastrar.' };
     }
-  }, [login]); // Dependência do login ao usar auto-login
+  }, []);
 
-    const logout = useCallback(() => {
+  const logout = useCallback(() => {
     setUser(null);
     setToken(null);
     localStorage.removeItem(STORAGE_KEY_USER);
@@ -142,11 +134,14 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: data.message || 'Erro ao atualizar' };
       }
 
+      // Atualiza o estado local com os dados retornados do backend
       const userAtualizado = { 
         ...user, 
-        username: data.user.nome,
-        email: data.user.email,
-        foto: data.user.foto
+        username: data.user.nome || user.username,
+        email: data.user.email || user.email,
+        telefone: data.user.telefone || user.telefone,
+        endereco: data.user.endereco || user.endereco,
+        foto: data.user.foto || user.foto
       };
 
       setUser(userAtualizado);

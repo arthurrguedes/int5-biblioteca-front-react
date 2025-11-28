@@ -34,14 +34,13 @@ const ControleReservas = () => {
   const handleApprove = async (idReserva) => {
       if (!window.confirm("Confirmar retirada do livro? Isso gerará um empréstimo.")) return;
 
-      // Chama o serviço de Empréstimos, não de Reservas
       const result = await emprestimosService.createEmprestimo(idReserva);
 
       if (result.success) {
           toast.success(result.message);
-          // Atualiza visualmente para Concluída
+          // Atualiza visualmente para 'Concluido'
           setReservations(prev => prev.map(r => 
-              r.id === idReserva ? { ...r, status: 'Concluída' } : r
+              r.id === idReserva ? { ...r, status: 'Concluido' } : r
           ));
       } else {
           toast.error(result.message);
@@ -78,7 +77,7 @@ const ControleReservas = () => {
   const getStatusClass = (status) => {
       switch (status) {
           case 'Ativa': return styles.statusAtiva;
-          case 'Concluída': return styles.statusConcluida; // Mantive caso existam legados
+          case 'Concluido': return styles.statusConcluida; // Mantive caso existam legados
           case 'Cancelada': return styles.statusCancelada;
           case 'Expirada': return styles.statusExpirada;
           default: return styles.statusAtiva;
@@ -106,7 +105,7 @@ const ControleReservas = () => {
             <option value="Ativa">Ativas</option>
             <option value="Cancelada">Canceladas</option>
             <option value="Expirada">Expiradas</option>
-            <option value="Concluídas">Concluídas</option>
+            <option value="Concluido">Concluídas</option>
         </select>
       </div>
 

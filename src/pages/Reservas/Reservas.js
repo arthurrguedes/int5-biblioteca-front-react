@@ -57,7 +57,7 @@ const Reservas = () => {
   const getStatusStyle = (status) => {
       switch (status) {
           case 'Ativa': return styles.statusActive;
-          case 'Concluída': return styles.statusCompleted;
+          case 'Concluido': return styles.statusCompleted;
           case 'Cancelada': return styles.statusCancelled;
           default: return styles.statusActive;
       }

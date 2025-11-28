@@ -5,15 +5,13 @@
     background-color: #f0f0f0;
     min-height: 80vh;
 }
-
-/* Layout de Duas Colunas */
 .contentLayout {
     display: flex;
     gap: 30px;
     align-items: flex-start;
 }
 
-/* Sidebar (Reutilizando estilo do Catálogo) */
+/* Sidebar */
 .sidebar {
     width: 250px;
     padding: 20px;
@@ -51,14 +49,14 @@
     color: #ff9800;
 }
 
-/* Conteúdo Principal */
+/* Conteúdo principal */
 .mainContent {
     flex-grow: 1;
 }
 
 .headerSection {
     display: flex;
-    justify-content: flex-end; /* Busca alinhada à direita */
+    justify-content: flex-end; 
     margin-bottom: 30px;
 }
 
@@ -85,23 +83,23 @@
     cursor: pointer;
 }
 
-/* Card do Livro */
+/* Card do livro */
 .bookDetailCard {
     background-color: white;
-    border: 1px solid #ff9800; /* Borda Laranja */
+    border: 1px solid #ff9800; 
     border-radius: 8px;
     padding: 40px;
-    position: relative; /* Para posicionar o badge */
+    position: relative; 
     margin-top: 20px;
     display: flex;
     gap: 40px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
 }
 
-/* Etiqueta de Categoria (Aba Laranja) */
+/* Etiqueta de categoria  */
 .categoryBadge {
     position: absolute;
-    top: -15px; /* Sobe para ficar na linha da borda */
+    top: -15px;
     left: 20px;
     background-color: #e67e00;
     color: white;
@@ -112,7 +110,7 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Imagem do Livro */
+/* Imagem do livro */
 .bookCover {
     width: 220px;
     height: 320px;
@@ -121,7 +119,7 @@
     border-radius: 4px;
 }
 
-/* Informações do Livro */
+/* Informações do livro */
 .bookInfo {
     flex-grow: 1;
     display: flex;

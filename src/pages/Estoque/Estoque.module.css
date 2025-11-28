@@ -6,21 +6,20 @@
     min-height: 80vh;
 }
 
-/* Breadcrumb e Título */
 .breadcrumb {
     font-size: 14px;
     color: #6a5acd;
     margin-bottom: 20px;
 }
 
-/* Layout Principal */
+/* Layout principal */
 .contentLayout {
     display: flex;
     gap: 30px;
     align-items: flex-start;
 }
 
-/* Sidebar (Reutilizando estilo visual do Catálogo) */
+/* Sidebar */
 .sidebar {
     width: 250px;
     padding: 20px;
@@ -58,7 +57,7 @@
     font-weight: bold;
 }
 
-/* Conteúdo Principal */
+/* Conteúdo principal */
 .mainContent {
     flex-grow: 1;
 }
@@ -76,7 +75,7 @@
     color: #333;
 }
 
-/* Barra de Busca */
+/* Barra de busca */
 .searchBar {
     display: flex;
     background-color: white;
@@ -100,7 +99,7 @@
     cursor: pointer;
 }
 
-/* Tabela de Estoque */
+/* Tabela de estoque */
 .gridHeader {
     display: grid;
     grid-template-columns: 3fr 1fr 1fr;
@@ -113,7 +112,7 @@
 }
 
 .gridHeader div:first-child {
-    text-align: left; /* Alinha "Livro" à esquerda */
+    text-align: left; 
 }
 
 .stockList {
@@ -123,7 +122,7 @@
     margin-top: 10px;
 }
 
-/* Card do Livro (Linha da Tabela) */
+/* Card do livro */
 .stockCard {
     display: grid;
     grid-template-columns: 3fr 1fr 1fr;
@@ -170,7 +169,7 @@
     color: #666;
 }
 
-/* Controle de Estoque */
+/* Controle de estoque */
 .stockControl {
     display: flex;
     justify-content: center;

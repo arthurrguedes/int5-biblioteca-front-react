@@ -19,16 +19,15 @@ export const AuthProvider = ({ children }) => {
     return localStorage.getItem(STORAGE_KEY_TOKEN);
   });
 
-  // --- LOGIN ---
+  // Login
   const login = useCallback(async (identifier, password, isLibrarian) => {
     try {
-      // Define o endpoint baseado no tipo de usuário
       // Se for bibliotecário, chama /bibliotecarios/login, senão /users/login
       const endpoint = isLibrarian ? '/bibliotecarios/login' : '/users/login';
       
       // O back-end espera { email, senha } para usuário ou { login, senha } para bibliotecário
       const body = isLibrarian 
-        ? { login: identifier,yb: password } // Ajuste se o back esperar senha
+        ? { login: identifier,yb: password }
         : { email: identifier, senha: password };
 
         // Users: { email, senha }
@@ -49,19 +48,18 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: data.message || 'Erro ao fazer login' };
       }
 
-      // Padronizando o objeto user para o front-end
       // O Front usa username, o banco devolve nome
       const userData = {
         id: data.user.id,
         username: data.user.nome, 
-        email: data.user.email || null, // Bibliotecário não tem email no retorno atual
+        email: data.user.email || null,
         role: data.user.role || (isLibrarian ? 'admin' : 'usuario')
       };
 
       const realToken = data.token;
 
       setUser(userData);
-      setToken('token-dummy-jwt'); // Futuramente seu back retornará um token real aqui
+      setToken('token-dummy-jwt');
       
       localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
       localStorage.setItem(STORAGE_KEY_TOKEN, realToken);
@@ -74,7 +72,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // --- CADASTRO (Apenas Usuários Comuns) ---
+  // Cadastro de usuários comuns
   const register = useCallback(async (nome, email, password, dataNascimento) => {
     try {
       const response = await fetch(`${API_URL}/users/register`, {
@@ -84,7 +82,7 @@ export const AuthProvider = ({ children }) => {
           nome,
           email,
           senha: password,
-          dataNascimento // Formato esperado: YYYY-MM-DD
+          dataNascimento // YYYY-MM-DD
         })
       });
 
@@ -109,7 +107,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(STORAGE_KEY_TOKEN);
   }, []);
 
-  // UPDATE
+  // Atualizar
   const updateProfile = useCallback(async (dados) => {
     if (!user?.id) {
         return { success: false, message: "Usuário não identificado." };
@@ -117,7 +115,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const headers = {
-        'Authorization': `Bearer ${token}` // Envia o token salvo no contexto
+        'Authorization': `Bearer ${token}` // Envia o token salvo
       };
 
       let body;

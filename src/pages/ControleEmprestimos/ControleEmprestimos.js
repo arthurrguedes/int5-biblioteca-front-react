@@ -13,7 +13,6 @@ const ControleEmprestimos = () => {
     const loadLoans = async () => {
         setLoading(true);
         const data = await emprestimosService.getAllEmprestimos();
-        // O service já retorna o array pronto do backend
         setLoans(Array.isArray(data) ? data : []);
         setLoading(false);
     };

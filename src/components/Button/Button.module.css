@@ -27,11 +27,11 @@
 }
 
 /* Variantes */
-.primary { background-color: #38006b; }  /* Roxo (Login, Confirmar) */
-.success { background-color: #4caf50; }  /* Verde (Reservar, Autorizar) */
-.danger  { background-color: #e57373; }  /* Vermelho (Cancelar, Renovar) */
-.warning { background-color: #ff9800; }  /* Laranja (Fila, Editar) */
-.dark    { background-color: #2d2d2d; }  /* Cinza Escuro (Meus Empréstimos) */
+.primary { background-color: #38006b; } 
+.success { background-color: #4caf50; }
+.danger  { background-color: #e57373; }
+.warning { background-color: #ff9800; }
+.dark    { background-color: #2d2d2d; }
 
 /* Tamanhos */
 .fullWidth { width: 100%; }

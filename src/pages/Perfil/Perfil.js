@@ -78,13 +78,13 @@ const Perfil = () => {
         </div>
 
         <div className={styles.infoList}>
-          {/* Nome (Apenas leitura por enquanto) */}
+          {/* Nome */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Nome Completo:</label>
             <span className={styles.value}>{profileData.nome}</span>
           </div>
 
-          {/* Email (Editável e Salva no Banco) */}
+          {/* Email */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Email:</label>
             {isEditing ? (
@@ -100,7 +100,7 @@ const Perfil = () => {
             )}
           </div>
 
-          {/* Telefone (Visual apenas - Falta coluna no BD) */}
+          {/* Telefone */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Telefone:</label>
             {isEditing ? (
@@ -117,7 +117,7 @@ const Perfil = () => {
             )}
           </div>
 
-          {/* Endereço (Visual apenas - Falta coluna no BD) */}
+          {/* Endereço */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Endereço:</label>
             {isEditing ? (

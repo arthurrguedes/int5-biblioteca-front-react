@@ -10,9 +10,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    height: 90%; /* Ocupa altura total do pai */
+    height: 90%; 
     cursor: pointer;
-    text-decoration: none; /* Remove sublinhado de link */
+    text-decoration: none; 
     color: inherit;
 }
 
@@ -25,7 +25,7 @@
 .placeholder {
     background-color: #f0f0f0;
     width: 100%;
-    height: 160px; /* Altura padrão da capa */
+    height: 160px; 
     border-radius: 4px;
     margin-bottom: 15px;
     display: flex;
@@ -42,7 +42,6 @@
     margin-bottom: 5px;
     width: 100%;
     
-    /* Limita texto a 2 linhas */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;

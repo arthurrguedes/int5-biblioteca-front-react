@@ -38,7 +38,7 @@ const ControleReservas = () => {
 
       if (result.success) {
           toast.success(result.message);
-          // Atualiza visualmente para 'Concluido'
+          // Atualiza para 'Concluido'
           setReservations(prev => prev.map(r => 
               r.id === idReserva ? { ...r, status: 'Concluido' } : r
           ));
@@ -47,7 +47,7 @@ const ControleReservas = () => {
       }
   };
 
-  // --- LÓGICA DE CANCELAMENTO (A única ação necessária) ---
+  // Cancelamento
   const handleCancel = async (id) => {
       if (!window.confirm("Tem certeza que deseja cancelar esta reserva?")) return;
 
@@ -55,7 +55,7 @@ const ControleReservas = () => {
       
       if (success) {
           toast.success("Reserva cancelada com sucesso.");
-          // Atualiza a lista visualmente para 'Cancelada'
+          // Atualiza a lista para 'Cancelada'
           setReservations(prev => prev.map(r => 
               r.id === id ? { ...r, status: 'Cancelada' } : r
           ));
@@ -77,7 +77,7 @@ const ControleReservas = () => {
   const getStatusClass = (status) => {
       switch (status) {
           case 'Ativa': return styles.statusAtiva;
-          case 'Concluido': return styles.statusConcluida; // Mantive caso existam legados
+          case 'Concluido': return styles.statusConcluida; 
           case 'Cancelada': return styles.statusCancelada;
           case 'Expirada': return styles.statusExpirada;
           default: return styles.statusAtiva;
@@ -149,7 +149,7 @@ const ControleReservas = () => {
                     </td>
 
                     <td data-label="Ações" style={{textAlign: 'right'}}>
-                    {/* Apenas mostramos o botão se a reserva estiver ativa */}
+                    {/* O botão só aparece se a reserva estiver ativa */}
                     {res.status === 'Ativa' ? (
                       <div style={{display: 'flex', gap: '10px', justifyContent: 'flex-end'}}>
                             <button 

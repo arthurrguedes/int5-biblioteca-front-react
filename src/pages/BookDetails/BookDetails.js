@@ -17,7 +17,7 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]); 
 
-  // Carrega os dados reais do Livro e Categorias
+  // Carrega os dados de livro e categorias
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -39,7 +39,7 @@ const BookDetails = () => {
     loadData();
   }, [id]);
 
-  // Lógica de Reserva
+  // Reserva
   const handleReserve = async () => {
     if (!user) {
         toast.info("Faça login para reservar livros.");
@@ -47,22 +47,19 @@ const BookDetails = () => {
         return;
     }
 
-    // Chama o serviço de reserva
     const result = await reservasService.createReservation(book.id);
 
     if (result.success) {
         if (result.type === 'RESERVA') {
             toast.success(result.message);
             navigate('/reservas');
-        } else {
-            toast.warn(result.message); // Lista de Espera
+        } else if (result.type === 'ESPERA') {
+            toast.warn(result.message, { autoClose: 5000 }); 
         }
     } else {
         toast.error(result.message);
     }
   };
-
-  // Verificações de Segurança (Antes de renderizar qualquer coisa que use 'book')
   
   if (loading) return <div className={styles.container}><p style={{padding: 20}}>Carregando...</p></div>;
 
@@ -89,7 +86,7 @@ const BookDetails = () => {
 
       <div className={styles.contentLayout}>
         
-        {/* Sidebar com Categorias Reais */}
+        {/* Sidebar com as categorias */}
         <div className={styles.sidebar}>
           <div className={styles.sidebarTitle}>Nosso acervo</div>
           <ul className={styles.categoryList}>
@@ -103,7 +100,7 @@ const BookDetails = () => {
           </ul>
         </div>
 
-        {/* Conteúdo Principal */}
+        {/* Conteúdo principal */}
         <div className={styles.mainContent}>
           
             {/* Header */}
@@ -118,7 +115,7 @@ const BookDetails = () => {
                 </div>
             </div>
 
-            {/* Card do Livro */}
+            {/* Card do livro */}
             <div className={styles.bookDetailCard}>
                 <div className={styles.categoryBadge}>{book.category}</div>
                 <div className={styles.bookCover}></div>

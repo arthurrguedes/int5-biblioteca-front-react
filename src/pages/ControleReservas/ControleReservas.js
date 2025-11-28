@@ -34,21 +34,20 @@ const ControleReservas = () => {
   const handleApprove = async (idReserva) => {
       if (!window.confirm("Confirmar retirada do livro? Isso gerará um empréstimo.")) return;
 
-      // Chama o serviço de Empréstimos, não de Reservas
       const result = await emprestimosService.createEmprestimo(idReserva);
 
       if (result.success) {
           toast.success(result.message);
-          // Atualiza visualmente para Concluída
+          // Atualiza para 'Concluido'
           setReservations(prev => prev.map(r => 
-              r.id === idReserva ? { ...r, status: 'Concluída' } : r
+              r.id === idReserva ? { ...r, status: 'Concluido' } : r
           ));
       } else {
           toast.error(result.message);
       }
   };
 
-  // --- LÓGICA DE CANCELAMENTO (A única ação necessária) ---
+  // Cancelamento
   const handleCancel = async (id) => {
       if (!window.confirm("Tem certeza que deseja cancelar esta reserva?")) return;
 
@@ -56,7 +55,7 @@ const ControleReservas = () => {
       
       if (success) {
           toast.success("Reserva cancelada com sucesso.");
-          // Atualiza a lista visualmente para 'Cancelada'
+          // Atualiza a lista para 'Cancelada'
           setReservations(prev => prev.map(r => 
               r.id === id ? { ...r, status: 'Cancelada' } : r
           ));
@@ -78,7 +77,7 @@ const ControleReservas = () => {
   const getStatusClass = (status) => {
       switch (status) {
           case 'Ativa': return styles.statusAtiva;
-          case 'Concluída': return styles.statusConcluida; // Mantive caso existam legados
+          case 'Concluido': return styles.statusConcluida; 
           case 'Cancelada': return styles.statusCancelada;
           case 'Expirada': return styles.statusExpirada;
           default: return styles.statusAtiva;
@@ -106,7 +105,7 @@ const ControleReservas = () => {
             <option value="Ativa">Ativas</option>
             <option value="Cancelada">Canceladas</option>
             <option value="Expirada">Expiradas</option>
-            <option value="Concluídas">Concluídas</option>
+            <option value="Concluido">Concluídas</option>
         </select>
       </div>
 
@@ -150,7 +149,7 @@ const ControleReservas = () => {
                     </td>
 
                     <td data-label="Ações" style={{textAlign: 'right'}}>
-                    {/* Apenas mostramos o botão se a reserva estiver ativa */}
+                    {/* O botão só aparece se a reserva estiver ativa */}
                     {res.status === 'Ativa' ? (
                       <div style={{display: 'flex', gap: '10px', justifyContent: 'flex-end'}}>
                             <button 

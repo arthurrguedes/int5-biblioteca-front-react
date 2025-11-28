@@ -5,7 +5,6 @@ import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock, FaInstagram, FaFaceboo
 import { toast } from 'react-toastify';
 
 const Contato = () => {
-  // Estado para o formulário
   const [formData, setFormData] = useState({
     nome: '',
     email: '',
@@ -20,7 +19,6 @@ const Contato = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aqui entraria a lógica de envio para o backend
     console.log('Dados do formulário:', formData);
     const resolveAfter2Sec = new Promise(resolve => setTimeout(resolve, 2000));
     
@@ -50,7 +48,7 @@ const Contato = () => {
 
       <div className={styles.contentGrid}>
         
-        {/* CARD 1: Informações de Contato (Agrupadas) */}
+        {/* Informações de contato*/}
         <div className={styles.card}>
           <div className={styles.cardHeaderBadge}>Informações de Contato</div>
           
@@ -96,7 +94,7 @@ const Contato = () => {
           </div>
         </div>
 
-        {/* CARD 2: Formulário de Mensagem */}
+        {/* Formulário de mensagem */}
         <div className={styles.card}>
           <div className={styles.cardHeaderBadge}>Envie uma Mensagem</div>
           

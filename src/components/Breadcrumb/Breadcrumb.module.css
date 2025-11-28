@@ -1,4 +1,3 @@
-/* Estilos para o componente Breadcrumb */
 .breadcrumbContainer {
     font-size: 14px;
     margin-bottom: 20px;
@@ -10,7 +9,7 @@
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    color: #6a5acd; /* Roxo mais claro */
+    color: #6a5acd; 
 }
 
 .breadcrumbItem {
@@ -30,12 +29,11 @@
 }
 
 .link:hover {
-    color: #38006b; /* Roxo principal no hover */
+    color: #38006b; 
 }
 
-/* Estilo para o último item (ativo) */
 .active {
-    color: #38006b; /* Roxo principal para o item ativo */
+    color: #38006b; 
     font-weight: bold;
     cursor: default;
 }

@@ -10,7 +10,6 @@
     gap: 30px;
 }
 
-/* Coluna da Esquerda - Lista */
 .leftColumn {
     flex: 2;
 }
@@ -21,7 +20,7 @@
     font-size: 24px;
 }
 
-/* Barra de Busca */
+/* Barra de busca */
 .searchBar {
     display: flex;
     background-color: white;
@@ -46,7 +45,7 @@
     cursor: pointer;
 }
 
-/* Cards de Livros */
+/* Cards de livros */
 .bookCard {
     background-color: white;
     border-radius: 8px;
@@ -102,7 +101,7 @@
 .statusUnavailable { color: #f44336; }
 .statusReserved { color: #ff9800; }
 
-/* Ações do Card */
+/* Ações do card */
 .bookActions {
     display: flex;
     flex-direction: column;
@@ -158,7 +157,7 @@
     font-weight: bold;
 }
 
-/* Coluna da Direita - Sidebar */
+/* Sidebar */
 .rightColumn {
     flex: 1;
     min-width: 300px;
@@ -167,7 +166,7 @@
 .sidebarCard {
     background-color: white;
     border-radius: 12px;
-    border: 1px solid #ff9800; /* Borda tracejada/estilo da imagem */
+    border: 1px solid #ff9800; 
     border-style: dashed; 
     padding: 20px;
     position: sticky;
@@ -179,7 +178,7 @@
     background-color: #e67e00;
     height: 30px;
     border-radius: 12px 12px 0 0;
-    margin: -21px -21px 20px -21px; /* Ajuste para cobrir o padding */
+    margin: -21px -21px 20px -21px; 
 }
 
 .sidebarBookInfo {

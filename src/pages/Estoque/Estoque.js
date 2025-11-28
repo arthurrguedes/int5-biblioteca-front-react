@@ -3,16 +3,16 @@ import styles from './Estoque.module.css';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import { FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { bookService } from '../../services/bookService'; // Importando o serviço
+import { bookService } from '../../services/bookService';
 
 const Estoque = () => {
   const [categories, setCategories] = useState(['Todos os Livros']);
-  const [inventory, setInventory] = useState([]); // Inicializa vazio
+  const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos os Livros');
 
-  // Carrega Dados (Livros e Gêneros)
+  // Carrega dados
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -41,7 +41,7 @@ const Estoque = () => {
     loadData();
   }, []);
 
-  // Lógica para atualizar o estoque no backend e no state
+  // Atualizar o estoque no backend e no state
   const handleStockChange = async (id, delta) => {
     // Encontra o item atual para calcular o novo valor
     const currentItem = inventory.find(item => item.id === id);
@@ -49,13 +49,13 @@ const Estoque = () => {
 
     const newTotal = Math.max(0, currentItem.totalStock + delta);
 
-    // Validação Lógica (Front-end)
+    // Validação lógica do front-end
     if (newTotal < (currentItem.rented + currentItem.reserved)) {
       toast.error("Não é possível reduzir o estoque físico abaixo da quantidade em uso.");
       return;
     }
 
-    // Chamada à API
+    // Chama a API
     const success = await bookService.updateStock(id, newTotal);
 
     // Se sucesso, atualiza o visual
@@ -109,7 +109,6 @@ const Estoque = () => {
         <div className={styles.sidebar}>
           <div className={styles.sidebarTitle}>Nosso acervo</div>
           <ul className={styles.categoryList}>
-            {/* CORREÇÃO: Usar 'categories' do estado, não 'CATEGORIES' */}
             {categories.map(cat => (
               <li 
                 key={cat} 
@@ -122,10 +121,10 @@ const Estoque = () => {
           </ul>
         </div>
 
-        {/* Conteúdo Principal */}
+        {/* Conteúdo principal */}
         <div className={styles.mainContent}>
           
-          {/* Header da Seção */}
+          {/* Header da seção */}
           <div className={styles.headerSection}>
             <h2 className={styles.categoryHeader}>{selectedCategory}</h2>
             <div className={styles.searchBar}>
@@ -156,7 +155,7 @@ const Estoque = () => {
                     return (
                     <div key={item.id} className={styles.stockCard}>
                         
-                        {/* Coluna 1: Checkbox + Info */}
+                        {/*Checkbox + Info */}
                         <div className={styles.bookInfo}>
                         <input type="checkbox" className={styles.checkbox} />
                         <div className={styles.bookCover}></div>
@@ -166,14 +165,14 @@ const Estoque = () => {
                         </div>
                         </div>
 
-                        {/* Coluna 2: Controle de Estoque (Ação Admin) */}
+                        {/* Controle de Estoque para admin */}
                         <div className={styles.stockControl}>
                         <button className={styles.qtyBtn} onClick={() => handleStockChange(item.id, -1)}>-</button>
                         <span className={styles.qtyValue}>{item.totalStock}</span>
                         <button className={styles.qtyBtn} onClick={() => handleStockChange(item.id, 1)}>+</button>
                         </div>
 
-                        {/* Coluna 3: Status Texto */}
+                        {/* Status Texto */}
                         <div className={`${styles.statusBadge} ${status.style}`}>
                         {status.label}
                         </div>

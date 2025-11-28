@@ -4,7 +4,7 @@ import { FaBookOpen } from 'react-icons/fa';
 import styles from './BookCard.module.css';
 
 const BookCard = ({ book, linkTo }) => {
-  const Wrapper = linkTo ? Link : 'div'; // Se tiver link, usa Link, senão div
+  const Wrapper = linkTo ? Link : 'div';
 
   return (
     <Wrapper to={linkTo} className={styles.card}>

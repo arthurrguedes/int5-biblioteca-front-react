@@ -6,18 +6,17 @@ import BookCard from '../../components/BookCard/BookCard';
 import { bookService } from '../../services/bookService';
 
 const Catalogue = () => {
-  const [categories, setCategories] = useState([]); // Categorias vindas do banco
+  const [categories, setCategories] = useState([]); 
   const [books, setBooks] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // Efeito único para carregar dados iniciais (Livros e Gêneros)
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       try {
-        // Busca livros e categorias em paralelo para ganhar performance
+        // Busca livros e categorias
         const [booksData, genresData] = await Promise.all([
           bookService.getAllBooks(),
           bookService.getGenres()
@@ -32,26 +31,25 @@ const Catalogue = () => {
       }
     };
     loadData();
-  }, []); // roda apenas uma vez ao montar o componente
+  }, []); 
 
-  // Handlers
   const handleCategoryClick = (category) => {
     // Se clicar na mesma, desmarca. Se for outra, seleciona.
     setSelectedCategory(category === selectedCategory ? null : category);
     setSearchTerm(''); // Limpa a busca ao trocar categoria
   };
 
-  // Filtragem Inteligente
+  // Filtragem 
   const filteredBooks = useMemo(() => {
     let filtered = books;
     const lowerSearchTerm = searchTerm.toLowerCase().trim();
 
-    // Filtro por Categoria
+    // Filtro por categoria
     if (selectedCategory) {
         filtered = filtered.filter(book => book.category.includes(selectedCategory));
     }
 
-    // Filtro por Texto (Título, Autor ou Categoria)
+    // Filtro por texto
     if (lowerSearchTerm) {
         filtered = filtered.filter(book => 
         book.title.toLowerCase().includes(lowerSearchTerm) ||
@@ -69,7 +67,6 @@ const Catalogue = () => {
     return 'Todos os Livros';
   };
 
-  // Breadcrumb dinâmico
   const breadcrumbItems = useMemo(() => {
     const items = [
       { label: 'Home', path: '/' },
@@ -92,7 +89,7 @@ const Catalogue = () => {
       </div>
 
       <div className={styles.contentLayout}>
-        {/* Sidebar de Categorias */}
+        {/* Sidebar de categorias */}
         <div className={styles.sidebar}>
           <div className={styles.sidebarTitle}>Nosso acervo</div>
           
@@ -109,10 +106,10 @@ const Catalogue = () => {
           </ul>
         </div>
 
-        {/* Conteúdo Principal */}
+        {/* Conteúdo principal */}
         <div className={styles.mainContent}>
           
-          {/* Barra de Busca */}
+          {/* Barra de busca */}
           <div className={styles.searchBar}>
             <input
               type="text"
@@ -126,12 +123,12 @@ const Catalogue = () => {
             </button>
           </div>
 
-          {/* Cabeçalho da Lista */}
+          {/* Cabeçalho da lista */}
           <div className={styles.categoryHeader}>
             <span className={styles.categoryHeaderText}>{getHeaderTitle()}</span>
           </div>
 
-          {/* Grid de Livros */}
+          {/* Grid de livros */}
           {loading ? (
              <div style={{ padding: '20px', textAlign: 'center' }}>Carregando acervo...</div>
           ) : (

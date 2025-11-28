@@ -2,9 +2,9 @@
     background-color: #38006b;
     color: white;
     padding: 20px 0;
-    margin-top: auto; /* Empurra o footer para o final */
+    margin-top: auto; 
     width: 100%;
-    border-top: 4px solid #5d288d; /* Detalhe visual sutil */
+    border-top: 4px solid #5d288d; 
 }
 
 .container {
@@ -38,7 +38,7 @@
 }
 
 .link:hover {
-    color: #ff9800; /* Laranja do tema */
+    color: #ff9800; 
 }
 
 .copyright {
@@ -51,7 +51,7 @@
     text-align: center;
 }
 
-/* Responsividade simples */
+/* Responsividade básica */
 @media (max-width: 600px) {
     .links {
         gap: 15px;

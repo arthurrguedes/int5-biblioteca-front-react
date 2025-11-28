@@ -23,7 +23,7 @@ import Footer from './components/Footer/Footer';
 
 const HEADER_HEIGHT = '50px'; 
 
-// Componente de Placeholder para Relatórios (ainda não criado)
+// Componente de Placeholder para relatórios (ainda não criado)
 const Relatorios = () => <div style={{padding: 20}}><h1>Relatórios</h1></div>;
 
 function App() {
@@ -35,7 +35,7 @@ function App() {
       
       <div style={{ paddingTop: HEADER_HEIGHT }}>
         <Routes>
-          {/* --- Rotas Públicas (Qualquer um acessa) --- */}
+          {/* Rotas públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginScreen />} /> 
           <Route path="/cadastro" element={<RegisterScreen />} />
@@ -44,7 +44,7 @@ function App() {
           <Route path="/contato" element={<Contato />} />
           <Route path="/sobre-nos" element={<SobreNos />} />
 
-          {/* --- Rotas Protegidas (Requer Login) --- */}
+          {/* Rotas protegidas */}
           <Route 
             path="/reservas" 
             element={
@@ -70,7 +70,7 @@ function App() {
             } 
           />
           
-          {/* --- Rotas de Administrador (Requer Login + Role 'admin') --- */}
+          {/* Rotas de administrador */}
           <Route 
             path="/estoque" 
             element={

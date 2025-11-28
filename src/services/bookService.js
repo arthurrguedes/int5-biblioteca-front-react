@@ -9,7 +9,7 @@ export const bookService = {
             
             const data = await response.json();
             
-            // Adaptador: Converte do formato do Banco (Backend) para o formato do Front (Componentes)
+            // Adaptador de formato do Banco para o front
             return data.map(book => ({
                 id: book.idLivro,
                 title: book.titulo,
@@ -20,7 +20,6 @@ export const bookService = {
                 year: book.ano,
                 editora: book.editora,
                 totalStock: book.estoque || 0,
-                // Campos que não temos no banco ainda, usamos padrão:
                 language: 'Português', 
                 pages: 0 
             }));
@@ -59,7 +58,7 @@ export const bookService = {
 
     getGenres: async () => {
         try {
-            // Chama a rota (via Gateway)
+            // Chama a rota via gateway
             const response = await fetch(`${API_URL}/books/genres`);
             if (!response.ok) throw new Error('Erro ao buscar gêneros');
             
@@ -72,7 +71,7 @@ export const bookService = {
         }
     },
 
-    // Atualizar Estoque
+    // Atualizar estoque
     updateStock: async (id, novaQuantidade) => {
         try {
             const response = await fetch(`${API_URL}/books/${id}/stock`, {

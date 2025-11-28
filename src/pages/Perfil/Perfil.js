@@ -135,7 +135,7 @@ const Perfil = () => {
         </div>
 
         <div className={styles.infoList}>
-          {/* Nome (Apenas leitura) */}
+          {/* Nome */}
           <div className={styles.infoGroup}>
             <label className={styles.label}>Nome Completo:</label>
             <span className={styles.value}>{profileData.nome}</span>

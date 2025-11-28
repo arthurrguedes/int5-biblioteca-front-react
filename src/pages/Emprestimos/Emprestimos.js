@@ -7,7 +7,7 @@ import Button from '../../components/Button/Button';
 import { emprestimosService } from '../../services/emprestimosService';
 import { toast } from 'react-toastify';
 
-// Filtros de Tempo
+// Filtros temporais
 const TIME_FILTERS = [
   { label: 'Últimos 6 Meses', months: 6 },
   { label: '1 Ano', months: 12 },
@@ -28,29 +28,21 @@ const Emprestimos = () => {
 
   const navigate = useNavigate();
 
-  // --- BUSCAR DADOS REAIS E ADAPTAR ---
+  // Busca de dados e adaptando-os do back
   useEffect(() => {
     const fetchLoans = async () => {
       setLoading(true);
       try {
         const data = await emprestimosService.getMyEmprestimos();
         
-        // Mapeamento: Backend -> Frontend
         const adaptedLoans = data.map(item => ({
-            id: item.idEmprestimo, // Backend: idEmprestimo
+            id: item.idEmprestimo, 
             title: item.titulo || 'Título indisponível',
-            year: item.editora ? `Ed. ${item.editora}` : '', // Usando editora
-            
-            // Backend envia datas ISO (2023-11-25T...). Convertemos para string legível.
+            year: item.editora ? `Ed. ${item.editora}` : '', 
             startDate: new Date(item.dataEmprestimo).toLocaleDateString('pt-BR'),
             endDate: new Date(item.dataDevolucaoPrevista).toLocaleDateString('pt-BR'),
-            
-            // Normaliza status para minúsculo para bater com seus filtros ('Ativo' -> 'vigente')
             status: (item.statusEmprestimo === 'Ativo' || item.statusEmprestimo === 'Atrasado') ? 'vigente' : 'devolvido',
-            
-            statusReal: item.statusEmprestimo, // Guardamos o status original para exibição se quiser
-            
-            // Para filtros de data
+            statusReal: item.statusEmprestimo, 
             returnDateRaw: item.dataDevolucaoReal ? new Date(item.dataDevolucaoReal) : null 
         }));
         
@@ -96,7 +88,7 @@ const Emprestimos = () => {
       <h1 className={styles.pageTitle}>Meus empréstimos</h1>
 
       <div className={styles.filtersContainer}>
-        {/* Dropdown Status */}
+        {/* Dropdown status */}
         <div className={styles.dropdownWrapper}>
           <button 
             className={styles.dropdownButton} 
@@ -117,7 +109,7 @@ const Emprestimos = () => {
           )}
         </div>
 
-        {/* Dropdown Tempo (Apenas se devolvido) */}
+        {/* Dropdown tempo */}
         {statusFilter === 'devolvido' && (
             <div className={styles.dropdownWrapper}>
             <button 
@@ -151,7 +143,7 @@ const Emprestimos = () => {
           filteredLoans.map(loan => (
             <div key={loan.id} className={styles.loanCardWrapper}>
               <div className={styles.cardBody}>
-                {/* Placeholder da Capa */}
+                {/* Placeholder da capa */}
                 <div className={styles.bookPlaceholder}>
                     <span style={{fontSize:'2rem', color:'#fff'}}>📖</span>
                 </div>

@@ -28,12 +28,7 @@ import RelatorioEstoque from './components/ControleRelatorios/RelatorioEstoque/R
 import RelatorioLivros from './components/ControleRelatorios/RelatorioLivros/RelatorioLivros';
 import RelatorioUsuarios from './components/ControleRelatorios/RelatorioUsuarios/RelatorioUsuarios';
 
-
-
 const HEADER_HEIGHT = '50px'; 
-
-// Componente de Placeholder para relatórios (ainda não criado)
-const Relatorios = () => <div style={{padding: 20}}><h1>Relatórios</h1></div>;
 
 function App() {
   return (

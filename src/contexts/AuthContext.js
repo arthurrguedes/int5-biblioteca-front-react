@@ -8,6 +8,14 @@ const API_URL = 'http://localhost:3001';
 const STORAGE_KEY_USER = '@BibliotecaPlus:user';
 const STORAGE_KEY_TOKEN = '@BibliotecaPlus:token';
 
+const safeParseJson = async (response) => {
+  try {
+    return await response.json();
+  } catch (err) {
+    return null;
+  }
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem(STORAGE_KEY_USER);
@@ -24,8 +32,9 @@ export const AuthProvider = ({ children }) => {
       // Se for bibliotecário, chama /bibliotecarios/login, senão /users/login
       const endpoint = isLibrarian ? '/bibliotecarios/login' : '/users/login';
       
+      // CORREÇÃO: corpo correto para cada tipo
       const body = isLibrarian 
-        ? { login: identifier,yb: password }
+        ? { login: identifier, senha: password }  // supondo que backend espera { login, senha }
         : { email: identifier, senha: password };
 
       const response = await fetch(`${API_URL}${endpoint}`, {
@@ -34,27 +43,28 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(body)
       });
 
-      const data = await response.json();
+      const data = await safeParseJson(response);
 
       if (!response.ok) {
-        return { success: false, message: data.message || 'Erro ao fazer login' };
+        return { success: false, message: data?.message || 'Erro ao fazer login' };
       }
 
-      // O Front usa username, o banco devolve nome
+      // Mapeia os campos do backend para o front
       const userData = {
-        id: data.user.id,
-        username: data.user.nome, 
-        email: data.user.email || null,
-        role: data.user.role || (isLibrarian ? 'admin' : 'usuario')
+        id: data.user?.id ?? data.user?.usuario_id,
+        username: data.user?.nome ?? data.user?.usuario_nome,
+        email: (data.user?.email ?? data.user?.usuario_email) || null,
+        role: data.user?.role || (isLibrarian ? 'admin' : 'usuario')
       };
 
-      const realToken = data.token;
+      const realToken = data.token || null;
 
       setUser(userData);
-      setToken('token-dummy-jwt');
+      // SALVA O TOKEN REAL retornado pelo backend (antes estava salvo um dummy)
+      setToken(realToken);
       
       localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
-      localStorage.setItem(STORAGE_KEY_TOKEN, realToken);
+      if (realToken) localStorage.setItem(STORAGE_KEY_TOKEN, realToken);
 
       return { success: true };
 
@@ -65,26 +75,35 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Cadastro de usuários comuns
-  const register = useCallback(async (nome, email, password, dataNascimento) => {
+  // NOTE: esta assinatura combina com seu RegisterScreen: (username, email, password, dob, phone, address)
+  const register = useCallback(async (nome, email, password, dataNascimento, phone, address) => {
     try {
+      // Normalizações mínimas
+      const normalizedPhone = phone ? String(phone).replace(/[^\d]/g, '') : null;
+      const payload = {
+        nome: nome && nome.trim(),
+        email: email && email.trim().toLowerCase(),
+        senha: password,
+        dataNascimento: dataNascimento || null, // input type=date costuma retornar YYYY-MM-DD
+        telefone: normalizedPhone,
+        endereco: address && address.trim()
+      };
+
+      // console.log('Enviando payload /users/register ->', payload);
+
       const response = await fetch(`${API_URL}/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome,
-          email,
-          senha: password,
-          dataNascimento // YYYY-MM-DD
-        })
+        body: JSON.stringify(payload)
       });
 
-      const data = await response.json();
+      const data = await safeParseJson(response);
 
       if (!response.ok) {
-        return { success: false, message: data.message || 'Erro ao cadastrar' };
+        return { success: false, message: data?.message || data?.error || 'Erro ao cadastrar' };
       }
       
-      return { success: true };
+      return { success: true, data };
 
     } catch (error) {
       console.error("Erro no cadastro:", error);
@@ -125,23 +144,23 @@ export const AuthProvider = ({ children }) => {
         body: body
       });
 
-      const data = await response.json();
+      const data = await safeParseJson(response);
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
              logout(); 
              return { success: false, message: "Sessão expirada. Faça login novamente." };
         }
-        return { success: false, message: data.message || 'Erro ao atualizar' };
+        return { success: false, message: data?.message || 'Erro ao atualizar' };
       }
 
       // Atualiza o estado local com os dados retornados do backend
       const userAtualizado = { 
         ...user, 
-        username: data.user.nome || user.username,
-        email: data.user.email || user.email,
-        telefone: data.user.telefone || user.telefone,
-        endereco: data.user.endereco || user.endereco,
-        foto: data.user.foto || user.foto
+        username: data?.user?.nome || data?.user?.usuario_nome || user.username,
+        email: data?.user?.email || data?.user?.usuario_email || user.email,
+        telefone: data?.user?.telefone || user.telefone,
+        endereco: data?.user?.endereco || user.endereco,
+        foto: data?.user?.foto || user.foto
       };
 
       setUser(userAtualizado);

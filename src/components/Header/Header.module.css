@@ -1,7 +1,7 @@
 .header {
     background-color: #38006b;
-    padding: 0 20px; /* Ajustei o padding lateral para dar espaço em mobile */
-    height: 60px; /* Altura fixa ajuda no posicionamento */
+    padding: 0 20px; 
+    height: 60px; 
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -9,7 +9,7 @@
     margin: 0 auto; 
     width: 100%; 
     box-sizing: border-box;
-    position: relative; /* Para posicionar o menu mobile absoluto */
+    position: relative; 
 }
 
 .leftNav {
@@ -20,7 +20,7 @@
 .logoLink {
     text-decoration: none;
     cursor: pointer;
-    display: flex; /* Remove espaço extra abaixo da imagem */
+    display: flex; 
 }
 
 .logoImage {
@@ -32,10 +32,9 @@
 .rightNav {
     display: flex;
     align-items: center;
-    gap: 20px; /* Reduzi um pouco o gap */
+    gap: 20px; 
 }
 
-/* Container para os links em Desktop */
 .desktopLinks {
     display: flex;
     gap: 25px;
@@ -54,7 +53,6 @@
     color: #ffcc00;
 }
 
-/* Perfil */
 .profileDropdownContainer {
     position: relative; 
     cursor: pointer;
@@ -80,7 +78,6 @@
     font-size: 10px; 
 }
 
-/* Dropdown do Perfil (Desktop e Mobile) */
 .dropdownMenu {
     position: absolute;
     top: 100%; 
@@ -114,9 +111,8 @@
     margin: 0;
 }
 
-/* --- ESTILOS MOBILE --- */
+/* Estilos mobile */
 
-/* Ícone do Menu Sanduíche (Padrão: Oculto) */
 .hamburgerIcon {
     display: none;
     color: white;
@@ -125,13 +121,12 @@
     margin-left: 10px;
 }
 
-/* Menu Mobile (A lista de links quando aberta) */
 .mobileMenu {
     position: absolute;
-    top: 60px; /* Logo abaixo do header */
+    top: 60px; 
     right: 0;
-    width: 200px; /* Largura do menu lateral */
-    background-color: #4a148c; /* Um pouco mais escuro ou igual ao header */
+    width: 200px; 
+    background-color: #4a148c; 
     box-shadow: -2px 5px 10px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
@@ -152,19 +147,15 @@
     color: #ffcc00;
 }
 
-/* --- MEDIA QUERIES --- */
 @media (max-width: 768px) {
-    /* Esconde os links horizontais */
     .desktopLinks {
         display: none;
     }
 
-    /* Mostra o ícone sanduíche */
     .hamburgerIcon {
         display: block;
     }
 
-    /* Ajusta o espaçamento na navegação direita */
     .rightNav {
         gap: 10px;
     }

@@ -4,10 +4,10 @@ import styles from './Button.module.css';
 const Button = ({ 
   children, 
   onClick, 
-  variant = 'primary', // primary, success, danger, warning, dark
+  variant = 'primary',
   type = 'button', 
   fullWidth = false,
-  size = 'medium', // small, medium
+  size = 'medium',
   disabled = false,
   style = {}
 }) => {

@@ -6,19 +6,19 @@ import LogoImage from '../../assets/logo.png';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Header = () => {
-  // Estado para o Dropdown de Perfil
+  // dropdown de Perfil
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  // Estado para o Menu Mobile (Sanduíche)
+  // menu mobile
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const { user, isLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
   
-  // --- Controles do Perfil ---
+  // Controles de perfil
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const closeDropdown = () => setIsDropdownOpen(false); // Fecha perfil
   
-  // --- Controles do Menu Mobile ---
+  // Controles de menu
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
     if (isDropdownOpen) setIsDropdownOpen(false); // Fecha perfil se abrir menu
@@ -32,7 +32,7 @@ const Header = () => {
     navigate('/login');
   };
 
-  // Lista de Links
+  // Lista de links
   const getNavLinks = () => {
     const linksAdmin = [
       { to: '/estoque', label: 'Estoque' },
@@ -67,7 +67,6 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      {/* Logo à Esquerda */}
       <div className={styles.leftNav}> 
         <Link to="/" className={styles.logoLink} onClick={closeMobileMenu}> 
           <img src={LogoImage} alt="Logo Biblioteca Plus" className={styles.logoImage} /> 
@@ -76,7 +75,7 @@ const Header = () => {
 
       <div className={styles.rightNav}> 
         
-        {/* 1. Links em Linha (Apenas Desktop) */}
+        {/* Links em linha */}
         <div className={styles.desktopLinks}>
           {navLinks.map((link, index) => (
             <Link 
@@ -89,11 +88,10 @@ const Header = () => {
           ))}
         </div>
         
-        {/* 2. Ícone de Perfil + Dropdown (Sempre visível) */}
+        {/* Ícone de perfil + dropdown*/}
         <div 
           className={styles.profileDropdownContainer} 
           onClick={toggleDropdown}
-          // onMouseEnter e Leave podem ser removidos para melhor UX mobile (clique é melhor)
         >
           <div className={styles.profileContainer}>
             <FaUserCircle className={styles.userIcon} />
@@ -137,14 +135,12 @@ const Header = () => {
           )}
         </div>
 
-        {/* 3. Menu Sanduíche (Apenas Mobile - À direita do perfil) */}
         <div className={styles.hamburgerIcon} onClick={toggleMobileMenu}>
           {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
         </div>
 
       </div>
 
-      {/* 4. Lista de Links Mobile (Abre quando sanduíche é clicado) */}
       {isMobileMenuOpen && (
         <nav className={styles.mobileMenu}>
           {navLinks.map((link, index) => (

@@ -6,7 +6,7 @@ const Input = ({
   placeholder, 
   value, 
   onChange, 
-  icon: Icon, // Componente de ícone (ex: FaUser)
+  icon: Icon, // Componente de ícone
   required = false,
   name
 }) => {

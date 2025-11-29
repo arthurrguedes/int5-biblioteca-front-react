@@ -1,4 +1,3 @@
-// URL do API Gateway
 const API_URL = 'http://localhost:3001/emprestimos'; 
 
 const getAuthHeaders = () => {
@@ -10,7 +9,7 @@ const getAuthHeaders = () => {
 };
 
 export const emprestimosService = {
-    // Admin: Cria empréstimo a partir de uma reserva
+    // Admin: Criação de empréstimo a partir de uma reserva
     createEmprestimo: async (idReserva) => {
         try {
             const response = await fetch(API_URL, {

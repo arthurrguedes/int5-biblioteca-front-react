@@ -1,6 +1,6 @@
 const API_URL = 'http://localhost:3001/reservas';
 
-// Helper para pegar o token e montar o header
+// pega o token e monta o header
 const getAuthHeaders = () => {
     const token = localStorage.getItem('@BibliotecaPlus:token');
     return {
@@ -11,7 +11,7 @@ const getAuthHeaders = () => {
 
 export const reservasService = {
     
-    // Criar Reserva (Usuário comum)
+    // Criar reserva (usuário)
     createReservation: async (idLivro) => {
         try {
             const response = await fetch(API_URL, {
@@ -21,12 +21,17 @@ export const reservasService = {
             });
 
             const data = await response.json();
-
             if (response.status === 201) {
-                return { success: true, type: 'RESERVA', message: data.message };
+                if (data.type === 'ESPERA' || data.indisponivel) {
+                    // Entrou na fila (Indisponível)
+                    return { success: true, type: 'ESPERA', message: data.message }; 
+                } else {
+                    // Reserva confirmada
+                    return { success: true, type: 'RESERVA', message: data.message };
+                }
             } else if (response.status === 409) {
-                // 409 = Conflito (Sem estoque -> Entrou na Lista de Espera)
-                return { success: true, type: 'ESPERA', message: data.message };
+                // Já estava na fila (Conflito)
+                return { success: false, message: data.message };
             } else {
                 return { success: false, message: data.message || 'Erro ao reservar.' };
             }
@@ -36,7 +41,7 @@ export const reservasService = {
         }
     },
 
-    // Minhas Reservas (Usuário comum)
+    // Minhas reservas (usuário)
     getMyReservations: async () => {
         try {
             const response = await fetch(`${API_URL}/my`, {
@@ -47,11 +52,11 @@ export const reservasService = {
             if (!response.ok) throw new Error('Erro ao buscar reservas');
             const data = await response.json();
             
-            // Adaptação dos dados para o formato que a tela espera
+            // adaptação para front-end
             return data.map(r => ({
                 id: r.idReserva,
                 bookTitle: r.titulo,
-                bookEditora: r.editora, // Se o backend retornar isso no join
+                bookEditora: r.editora, 
                 date: r.dataReserva,
                 deadline: r.prazoReserva,
                 status: r.statusReserva
@@ -62,7 +67,7 @@ export const reservasService = {
         }
     },
 
-    // Todas as Reservas (Admin / Bibliotecário)
+    // Todas as reservas (Admin / Bibliotecário)
     getAllReservations: async () => {
         try {
             const response = await fetch(API_URL, { 
@@ -87,7 +92,7 @@ export const reservasService = {
         }
     },
 
-    // Atualizar Status (Admin)
+    // Atualizar status (Admin)
     updateStatus: async (id, newStatus) => {
         try {
             const response = await fetch(`${API_URL}/${id}`, {
@@ -101,7 +106,7 @@ export const reservasService = {
         }
     },
 
-    // Cancelar (User/Admin)
+    // Cancelar (user/admin)
     cancelReservation: async (id) => {
         try {
             const response = await fetch(`${API_URL}/${id}`, {

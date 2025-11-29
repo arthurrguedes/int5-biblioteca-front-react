@@ -13,7 +13,7 @@ const Reservas = () => {
 
   const navigate = useNavigate();
 
-  // Carrega as reservas reais do Banco de Dados
+  // Carrega as reservas reais do banco de dados
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -31,7 +31,7 @@ const Reservas = () => {
       const success = await reservasService.cancelReservation(id);
       if (success) {
         toast.success('Reserva cancelada com sucesso.');
-        // Atualiza a lista localmente para 'Cancelada' sem precisar recarregar tudo
+        // Atualiza a lista localmente para 'cancelada' sem precisar recarregar
         setReservations(prev => prev.map(r => 
             r.id === id ? { ...r, status: 'Cancelada' } : r
         ));
@@ -41,12 +41,12 @@ const Reservas = () => {
     }
   };
 
-  // Filtragem local (Busca pelo título do livro)
+  // Filtragem local (busca pelo título do livro)
   const filteredReservations = reservations.filter(res => 
     res.bookTitle.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Helpers de Formatação
+  // formatação
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString('pt-BR', {
@@ -74,10 +74,10 @@ const Reservas = () => {
       <Breadcrumb items={breadcrumbItems} />
 
       <div className={styles.contentLayout}>
-        <div className={styles.columnFull}> {/* Usamos coluna cheia para a lista */}
+        <div className={styles.columnFull}> 
           <h1 className={styles.pageTitle}>Minhas Reservas</h1>
           
-          {/* Barra de Busca */}
+          {/* Barra de busca */}
           <div className={styles.searchBar}>
             <input 
               type="text" 
@@ -89,7 +89,7 @@ const Reservas = () => {
             <FaSearch className={styles.searchIcon} />
           </div>
 
-          {/* Lista de Reservas */}
+          {/* Lista de reservas */}
           <div className={styles.reservationList}>
             {loading ? (
                 <p style={{textAlign: 'center', padding: '20px'}}>Carregando reservas...</p>
@@ -118,7 +118,7 @@ const Reservas = () => {
                     )}
                   </div>
 
-                  {/* Botão de Ação apenas se estiver Ativa */}
+                  {/* Botão de ação apenas se estiver Ativa */}
                   {res.status === 'Ativa' && (
                     <div className={styles.cardFooter}>
                       <button 

@@ -38,7 +38,7 @@
     min-height: 100px;
 }
 
-/* Container para os cards em linha (Scroll horizontal se muitos) */
+/* Container para os cards em linha (scroll horizontal se muitos) */
 .booksScrollContainer {
     display: flex;
     gap: 20px;
@@ -47,12 +47,12 @@
     margin: -10px;
 }
 
-/* Estilo do Card (Miniatura do Catalogo) */
+/* Estilo do card (miniatura do catalogo) */
 .bookCard {
     background-color: white;
     border: 1px solid #eee;
     border-radius: 8px;
-    width: 160px; /* Largura fixa */
+    width: 160px; 
     flex-shrink: 0; /* Impede encolher */
     padding: 15px;
     text-align: center;

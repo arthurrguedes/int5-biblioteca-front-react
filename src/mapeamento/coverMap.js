@@ -1,7 +1,7 @@
 // src/components/BookCard/coverMap.js
 
-export const CUSTOM_COVER_MAP = {
-    // Mapeamento sequencial dos 26 ISBNs para as 22 URLs fornecidas.
+export const mapeamentodeimg = {
+    // Mapeamento https://ocapista.com.br/portfolio_de_capas_de_livro.php
 
     //Capas da home
     "9788576572001": "https://ocapista.com.br/imgs/capas/a_arvore_da_vida.jpg",

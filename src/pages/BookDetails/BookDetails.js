@@ -7,6 +7,7 @@ import { bookService } from '../../services/bookService';
 import { reservasService } from '../../services/reservasService'; 
 import { useAuth } from '../../contexts/AuthContext'; 
 import { toast } from 'react-toastify';
+import { mapeamentodeimg } from '../../mapeamento/coverMap'; // ✅ novo import
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -17,12 +18,17 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]); 
 
+  // ✅ função para pegar a capa pelo ISBN
+  const getCoverImage = (isbn) => {
+    if (!isbn) return "/img/capa-indisponivel.jpg";
+    return mapeamentodeimg[isbn] || "/img/capa-indisponivel.jpg";
+  };
+
   // Carrega os dados de livro e categorias
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       try {
-        // Busca livro e categorias em paralelo
         const [bookData, genresData] = await Promise.all([
           bookService.getBookById(id),
           bookService.getGenres()
@@ -118,7 +124,15 @@ const BookDetails = () => {
             {/* Card do livro */}
             <div className={styles.bookDetailCard}>
                 <div className={styles.categoryBadge}>{book.category}</div>
-                <div className={styles.bookCover}></div>
+
+                {/* ✅ capa do livro renderizada pelo mapeamento */}
+                <div className={styles.bookCover}>
+                  <img
+                    src={getCoverImage(book.isbn)}
+                    alt={book.title}
+                    className={styles.coverImage}
+                  />
+                </div>
 
                 <div className={styles.bookInfo}>
                 <h1 className={styles.title}>{book.title}</h1>

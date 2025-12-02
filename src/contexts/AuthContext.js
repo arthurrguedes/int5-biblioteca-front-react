@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useCallback } from 'react';
 
 const AuthContext = createContext(null);
 
-// URL do API Gateway (ou direto para o backend se não houver gateway)
+// URL do API Gateway
 const API_URL = 'http://localhost:3001';
 
 const STORAGE_KEY_USER = '@BibliotecaPlus:user';
@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
       // Se for bibliotecário, chama /bibliotecarios/login, senão /users/login
       const endpoint = isLibrarian ? '/bibliotecarios/login' : '/users/login';
       
-      // CORREÇÃO: corpo correto para cada tipo
       const body = isLibrarian 
         ? { login: identifier, senha: password }  // supondo que backend espera { login, senha }
         : { email: identifier, senha: password };
@@ -60,7 +59,7 @@ export const AuthProvider = ({ children }) => {
       const realToken = data.token || null;
 
       setUser(userData);
-      // SALVA O TOKEN REAL retornado pelo backend (antes estava salvo um dummy)
+      // Salva o token retornado pelo backend
       setToken(realToken);
       
       localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
@@ -75,7 +74,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Cadastro de usuários comuns
-  // NOTE: esta assinatura combina com seu RegisterScreen: (username, email, password, dob, phone, address)
+  // combina com seu RegisterScreen: (username, email, password, dob, phone, address)
   const register = useCallback(async (nome, email, password, dataNascimento, phone, address) => {
     try {
       // Normalizações mínimas

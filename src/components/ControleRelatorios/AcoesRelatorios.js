@@ -8,7 +8,6 @@ const AcoesRelatorio = () => {
       .then(data => {
         console.log("Relatório atualizado:", data);
         alert("Relatório atualizado com sucesso!");
-        // Aqui você pode disparar um evento ou atualizar o estado global/contexto
       })
       .catch(err => console.error("Erro ao atualizar relatório:", err));
   };

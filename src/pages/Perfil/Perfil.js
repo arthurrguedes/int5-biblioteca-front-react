@@ -31,7 +31,6 @@ const Perfil = () => {
 
   const [editData, setEditData] = useState(profileData);
 
-  // --- MÁSCARA DE TELEFONE ---
   const formatPhoneNumber = (value) => {
     if (!value) return value;
     // Remove tudo que não é dígito
@@ -49,23 +48,23 @@ const Perfil = () => {
     return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 7)}-${phoneNumber.slice(7, 11)}`;
   };
 
-  // --- VALIDAÇÃO ---
+  // Validação
   const validateForm = () => {
-    // 1. Validação de Email (Regex Simples)
+    // Validação de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(editData.email)) {
         toast.error("Por favor, insira um e-mail válido.");
         return false;
     }
 
-    // 2. Validação de Telefone (Mínimo 10 dígitos: DDD + 8 números)
+    // Validação de telefone
     const rawPhone = editData.telefone.replace(/[^\d]/g, '');
     if (rawPhone.length < 10 || rawPhone.length > 11) {
         toast.error("Por favor, insira um telefone válido com DDD (ex: (21) 99999-9999).");
         return false;
     }
 
-    // 3. Validação de Endereço (Mínimo 5 caracteres para considerar válido)
+    // Validação de endereço
     if (!editData.endereco || editData.endereco.trim().length < 5) {
         toast.error("Por favor, insira um endereço completo.");
         return false;

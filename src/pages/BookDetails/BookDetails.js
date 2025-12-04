@@ -18,7 +18,7 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]); 
 
-  // ✅ função para pegar a capa pelo ISBN
+  // função para pegar a capa pelo ISBN
   const getCoverImage = (isbn) => {
     if (!isbn) return "/img/capa-indisponivel.jpg";
     return mapeamentodeimg[isbn] || "/img/capa-indisponivel.jpg";

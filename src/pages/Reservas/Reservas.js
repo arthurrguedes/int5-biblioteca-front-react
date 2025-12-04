@@ -41,7 +41,7 @@ const Reservas = () => {
     }
   };
 
-  // Filtragem local (busca pelo título do livro)
+  // Filtragem local
   const filteredReservations = reservations.filter(res => 
     res.bookTitle.toLowerCase().includes(searchTerm.toLowerCase())
   );

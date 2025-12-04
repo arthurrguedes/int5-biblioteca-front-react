@@ -7,7 +7,6 @@ import Button from '../../components/Button/Button';
 import { emprestimosService } from '../../services/emprestimosService';
 import { toast } from 'react-toastify';
 
-// Filtros temporais
 const TIME_FILTERS = [
   { label: 'Últimos 6 Meses', months: 6 },
   { label: '1 Ano', months: 12 },
@@ -28,23 +27,35 @@ const Emprestimos = () => {
 
   const navigate = useNavigate();
 
-  // Busca de dados e adaptando-os do back
+  // Busca de dados e adaptação do back
   useEffect(() => {
     const fetchLoans = async () => {
       setLoading(true);
       try {
         const data = await emprestimosService.getMyEmprestimos();
         
-        const adaptedLoans = data.map(item => ({
-            id: item.idEmprestimo, 
-            title: item.titulo || 'Título indisponível',
-            year: item.editora ? `Ed. ${item.editora}` : '', 
-            startDate: new Date(item.dataEmprestimo).toLocaleDateString('pt-BR'),
-            endDate: new Date(item.dataDevolucaoPrevista).toLocaleDateString('pt-BR'),
-            status: (item.statusEmprestimo === 'Ativo' || item.statusEmprestimo === 'Atrasado') ? 'vigente' : 'devolvido',
-            statusReal: item.statusEmprestimo, 
-            returnDateRaw: item.dataDevolucaoReal ? new Date(item.dataDevolucaoReal) : null 
-        }));
+        const adaptedLoans = data.map(item => {
+            const startDate = item.dataEmprestimo ? new Date(item.dataEmprestimo).toLocaleDateString('pt-BR') : '-';
+            
+            const expectedDate = item.dataDevolucaoPrevista || item.dataPrevista;
+            const endDate = expectedDate ? new Date(expectedDate).toLocaleDateString('pt-BR') : '-';
+
+            const actualDate = item.dataDevolucaoReal || item.dataDevolucao;
+            const returnDate = actualDate ? new Date(actualDate).toLocaleDateString('pt-BR') : null;
+
+            return {
+                id: item.idEmprestimo, 
+                title: item.titulo || 'Título indisponível',
+                year: item.editora ? `Ed. ${item.editora}` : '', 
+                startDate: startDate,
+                endDate: endDate, 
+                actualReturnDate: returnDate, 
+                
+                status: (item.statusEmprestimo === 'Ativo' || item.statusEmprestimo === 'Atrasado') ? 'vigente' : 'devolvido',
+                statusReal: item.statusEmprestimo, 
+                returnDateRaw: actualDate ? new Date(actualDate) : null 
+            };
+        });
         
         setLoans(adaptedLoans);
       } catch (error) {
@@ -143,27 +154,44 @@ const Emprestimos = () => {
           filteredLoans.map(loan => (
             <div key={loan.id} className={styles.loanCardWrapper}>
               <div className={styles.cardBody}>
-                {/* Placeholder da capa */}
-                <div className={styles.bookPlaceholder}>
-                    <span style={{fontSize:'2rem', color:'#fff'}}>📖</span>
+                {/* Imagem do livro */}
+                <div className={styles.bookPlaceholder} style={{ overflow: 'hidden', padding: 0, backgroundColor: 'transparent' }}>
+                    {loan.image ? (
+                        <img 
+                            src={loan.image} 
+                            alt={loan.title} 
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                    ) : (
+                        <span style={{fontSize:'2rem', color:'#fff'}}>📖</span>
+                    )}
                 </div>
                 
                 <div className={styles.infoBox}>
                   <div>
+                    {/* Data de Retirada */}
                     <div className={styles.infoRow}>
                       <span className={styles.infoLabel}>Retirada:</span>
                       <span className={styles.infoValue}>{loan.startDate}</span>
                     </div>
+
+                    {/*Data Prevista */}
                     <div className={styles.infoRow}>
-                      <span className={styles.infoLabel}>
-                        {loan.status === 'vigente' ? 'Devolução Prevista:' : 'Devolvido em:'}
-                      </span>
+                      <span className={styles.infoLabel}>Prevista:</span>
                       <span className={styles.infoValue} style={{
                           color: (loan.status === 'vigente' && new Date() > new Date(loan.endDate.split('/').reverse().join('-'))) ? 'red' : 'inherit'
                       }}>
                           {loan.endDate}
                       </span>
                     </div>
+
+                    {/* Data Real */}
+                    {loan.actualReturnDate && (
+                        <div className={styles.infoRow}>
+                            <span className={styles.infoLabel} style={{color: '#2dce89', fontWeight: 'bold'}}>Devolução:</span>
+                            <span className={styles.infoValue} style={{color: '#2dce89', fontWeight: 'bold'}}>{loan.actualReturnDate}</span>
+                        </div>
+                    )}
                   </div>
 
                   <div>

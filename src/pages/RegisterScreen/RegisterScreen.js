@@ -16,7 +16,6 @@ const RegisterScreen = () => {
   const { register } = useAuth(); 
   const navigate = useNavigate();
 
-  // --- MÁSCARA DE TELEFONE ---
   const formatPhoneNumber = (value) => {
     if (!value) return value;
     // Remove tudo que não é dígito
@@ -34,29 +33,29 @@ const RegisterScreen = () => {
     return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 7)}-${phoneNumber.slice(7, 11)}`;
   };
 
-  // --- VALIDAÇÃO ---
+  // Validação
   const validateForm = () => {
-    // 1. Validação de Email
+    // Validação de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         toast.error("Por favor, insira um e-mail válido.");
         return false;
     }
 
-    // 2. Validação de Telefone (Mínimo 10 dígitos: DDD + 8 números)
+    // Validação de telefone
     const rawPhone = phone.replace(/[^\d]/g, '');
     if (rawPhone.length < 10 || rawPhone.length > 11) {
         toast.error("Por favor, insira um telefone válido com DDD (ex: (21) 99999-9999).");
         return false;
     }
 
-    // 3. Validação de Endereço (Mínimo 5 caracteres)
+    // Validação de endereço
     if (!address || address.trim().length < 5) {
         toast.error("Por favor, insira um endereço completo.");
         return false;
     }
 
-    // 4. Validação de Senha (Opcional, mas recomendada)
+    // Validação de senha
     if (password.length < 6) {
         toast.error("A senha deve ter pelo menos 6 caracteres.");
         return false;

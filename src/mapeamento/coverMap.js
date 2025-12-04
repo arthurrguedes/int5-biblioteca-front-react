@@ -1,9 +1,6 @@
 // src/mapeamento/coverMap.js
 
 export const mapeamentodeimg = {
-    // ----------------------------------------------------------------------
-    // Mapeamentos com URLs definidas anteriormente (Manter)
-    // ----------------------------------------------------------------------
     "9788576572001": "https://ocapista.com.br/imgs/capas/a_arvore_da_vida.jpg",
     "9780141439518": "https://ocapista.com.br/imgs/capas/luta_diaria.jpg",
     "9780062693662": "https://ocapista.com.br/imgs/capas/sobre_fins_e_inicios.jpg",
@@ -11,7 +8,7 @@ export const mapeamentodeimg = {
     "9788599296318": "https://ocapista.com.br/imgs/capas/capa_livro_100a.jpg",
     "9788599296123": "https://ocapista.com.br/imgs/capas/capa_livro_100b.jpg",
     "9780618640157": "https://ocapista.com.br/imgs/capas/capa_livro_100e.jpg",
-    "8640157978061": "https://ocapista.com.br/imgs/capas/capa_livro_100e.jpg", // Duplicado
+    "8640157978061": "https://ocapista.com.br/imgs/capas/capa_livro_100e.jpg",
     "6408061815797": "https://ocapista.com.br/imgs/capas/a_alienator.jpg",
     "6584513629": "https://ocapista.com.br/imgs/capas/a_capa_ruins_of_the_empire.jpg",
     "8575225634": "https://ocapista.com.br/imgs/capas/a_historias_da_ciencia_oriental.jpg",
@@ -19,8 +16,8 @@ export const mapeamentodeimg = {
     "9793539927343": "https://ocapista.com.br/imgs/capas/a_curta_mais_a_sua_vida.jpg",
     "5520951748932": "https://ocapista.com.br/imgs/capas/a_sundered_moon.jpg",
     "5286266689728": "https://ocapista.com.br/imgs/capas/a_doses_de_sabedora.jpg",
-    "6939914769776": "https://ocapista.com.br/imgs/capas/a_sundered_moon.jpg", // Duplicado
-    "5073778549235": "https://ocapista.com.br/imgs/capas/a_sundered_moon.jpg", // Duplicado
+    "6939914769776": "https://ocapista.com.br/imgs/capas/a_sundered_moon.jpg", 
+    "5073778549235": "https://ocapista.com.br/imgs/capas/a_sundered_moon.jpg", 
     "1418030289687": "https://ocapista.com.br/imgs/capas/livro_de_horror_capa_livro_2.jpg", 
     "1456106348938": "https://ocapista.com.br/imgs/capas/capa_livro_fantasia_romance.jpg",
     "1550461768468": "https://ocapista.com.br/imgs/capas/fantasia_capa_livro.jpg",
@@ -31,7 +28,7 @@ export const mapeamentodeimg = {
     "2385749459884": "https://ocapista.com.br/imgs/capas/embebicao.jpg",
     "2454597516203": "https://ocapista.com.br/imgs/capas/a_arte_da_guerra_capa_livro.jpg",
     "2558322421335": "https://ocapista.com.br/imgs/capas/1984_capa_livro_george_orwell.jpg", 
-    "2763642454007": "https://ocapista.com.br/imgs/capas/1984_capa_livro_george_orwell.jpg", // Duplicado
+    "2763642454007": "https://ocapista.com.br/imgs/capas/1984_capa_livro_george_orwell.jpg", 
     "2767538402234": "https://ocapista.com.br/imgs/capas/livro_de_suspense_noir_livro_capa.jpg",
     "3005706953971": "https://ocapista.com.br/imgs/capas/caminhos_da_escuridao.jpg",
     "3280948294539": "https://ocapista.com.br/imgs/capas/alem_do_hype.jpg",
@@ -47,10 +44,6 @@ export const mapeamentodeimg = {
     "4701733351764": "https://ocapista.com.br/imgs/capas/revolucao_dos_bichos.jpg", 
     "4729589486901": "https://ocapista.com.br/imgs/capas/saude_mental.jpg", 
     "4876641795863": "https://ocapista.com.br/imgs/capas/a_arte_do_incompleto.jpg",
-    
-    // ----------------------------------------------------------------------
-    // ISBNs Novos/Não Mapeados: Repetindo a Sequência de URLs (39 únicas)
-    // ----------------------------------------------------------------------
     "5388830354701": "https://ocapista.com.br/imgs/capas/a_arvore_da_vida.jpg", 
     "5474519670679": "https://ocapista.com.br/imgs/capas/luta_diaria.jpg",
     "5556357339741": "https://ocapista.com.br/imgs/capas/sobre_fins_e_inicios.jpg",

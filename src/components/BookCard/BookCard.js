@@ -1,16 +1,12 @@
-// src/components/BookCard/BookCard.js
-
 import React from 'react'; 
 import { Link } from 'react-router-dom';
 import { FaBookOpen } from 'react-icons/fa';
 import styles from './BookCard.module.css';
-// ALTERE A LINHA ABAIXO PARA INCLUIR O '.js'
 import { mapeamentodeimg } from '../../mapeamento/coverMap.js'; // <-- CORRIGIDO AQUI!
 
 const BookCard = ({ book, linkTo }) => {
   const Wrapper = linkTo ? Link : 'div';
   
-  // Tenta buscar a URL no mapa usando o ISBN (inventado) como chave
   const coverUrl = mapeamentodeimg[book.isbn]; 
 
   return (

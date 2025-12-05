@@ -1,5 +1,3 @@
-// src/mapeamento/coverMap.js
-
 export const mapeamentodeimg = {
     "9788576572001": "https://ocapista.com.br/imgs/capas/a_arvore_da_vida.jpg",
     "9780141439518": "https://ocapista.com.br/imgs/capas/luta_diaria.jpg",
@@ -16,9 +14,9 @@ export const mapeamentodeimg = {
     "9793539927343": "https://ocapista.com.br/imgs/capas/a_curta_mais_a_sua_vida.jpg",
     "5520951748932": "https://ocapista.com.br/imgs/capas/a_sundered_moon.jpg",
     "5286266689728": "https://ocapista.com.br/imgs/capas/a_doses_de_sabedora.jpg",
-    "6939914769776": "https://ocapista.com.br/imgs/capas/a_sundered_moon.jpg", 
+    "6939914769776": "https://ocapista.com.br/imgs/capas/a_sundered_moon.jpg",
     "5073778549235": "https://ocapista.com.br/imgs/capas/a_sundered_moon.jpg", 
-    "1418030289687": "https://ocapista.com.br/imgs/capas/livro_de_horror_capa_livro_2.jpg", 
+    "1418030289687": "https://ocapista.com.br/imgs/capas/livro_de_horror_capa_livro_2.jpg",
     "1456106348938": "https://ocapista.com.br/imgs/capas/capa_livro_fantasia_romance.jpg",
     "1550461768468": "https://ocapista.com.br/imgs/capas/fantasia_capa_livro.jpg",
     "1619023273534": "https://ocapista.com.br/imgs/capas/capa_livro_100c.jpg",
